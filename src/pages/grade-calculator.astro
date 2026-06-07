@@ -1,0 +1,302 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import AdSlot from '../components/AdSlot.astro';
+
+const schema = {
+  '@context': 'https://schema.org',
+  '@type': 'WebApplication',
+  name: 'Grade Calculator',
+  url: 'https://calcspeed.com/grade-calculator',
+  description: 'Calculate your weighted grade average, letter grade, and GPA equivalent. Add multiple assignments with different weights. Free online grade calculator.',
+  applicationCategory: 'EducationApplication',
+  operatingSystem: 'Web Browser',
+  offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
+};
+
+const faqs = [
+  {
+    q: 'How is a weighted grade average calculated?',
+    a: 'A weighted grade average gives different assignments different levels of importance based on their assigned weight (percentage of the total grade). To calculate it, multiply each assignment\'s score by its weight, sum all those products, then divide by the sum of all weights. For example, if a midterm worth 30% receives 85% and a final worth 40% receives 90%, and homework worth 30% averages 95%: weighted average = (85×30 + 90×40 + 95×30) / (30+40+30) = (2550+3600+2850) / 100 = 90%.',
+  },
+  {
+    q: 'What GPA scale is this calculator based on?',
+    a: 'This calculator uses the standard 4.0 GPA scale widely used across US high schools and colleges. The mapping is: A+ = 4.0, A = 4.0, A- = 3.7, B+ = 3.3, B = 3.0, B- = 2.7, C+ = 2.3, C = 2.0, C- = 1.7, D+ = 1.3, D = 1.0, D- = 0.7, F = 0.0. Some institutions use a weighted GPA that rewards AP or honors courses with 5.0-scale credit, but this calculator uses the standard unweighted scale.',
+  },
+  {
+    q: 'What are the standard letter grade cutoffs?',
+    a: 'While cutoffs vary by institution and instructor, the most common standard is: A (90–100%), B (80–89%), C (70–79%), D (60–69%), F (below 60%). Some schools use A+ for 97–100%, A for 93–96%, A- for 90–92%, and similar plus/minus breakdowns within each letter range. Always check your specific course syllabus for the grading scale your instructor uses, as it may differ.',
+  },
+  {
+    q: 'Do all assignments need to have the same weight?',
+    a: 'No—this is the whole point of weighted grade calculation. Different types of assignments contribute different amounts to your final grade. A typical college course might weight homework at 20%, quizzes at 15%, a midterm at 30%, and a final exam at 35%. You can assign any weight to each assignment. The calculator totals your weights, so they don\'t need to add up to exactly 100% if you\'re only entering a subset of your assignments.',
+  },
+  {
+    q: 'What grade do I need on my final exam to get an A?',
+    a: 'To find the required final exam score, rearrange the weighted average formula. If your current grade before the final is G, the final is worth W% of the total grade, and your target overall grade is T, then: required final score = (T × total weight − G × remaining weight) / final weight. For instance, if you have 88% with 60% of the course complete, and the final is worth 40%, to get a 90% overall you need: (90×100 − 88×60) / 40 = (9000 − 5280) / 40 = 93%.',
+  },
+  {
+    q: 'What is a passing grade in US colleges?',
+    a: 'The minimum passing grade varies by institution and program. Most US colleges consider a D (around 60–69%) as the minimum passing grade for a standard course, though it may not satisfy major requirements. For courses required in your major or for graduate programs, a C or higher is often required. Some programs require a minimum C+ or B for prerequisite courses. Always check your school\'s academic policies and your program\'s specific requirements.',
+  },
+  {
+    q: 'How do I calculate my GPA from letter grades?',
+    a: 'Convert each letter grade to its GPA value using the standard 4.0 scale, then calculate a weighted average based on credit hours. Sum the products of each course\'s GPA value times its credit hours, then divide by the total credit hours. For example: English (A, 3 credits) = 4.0×3=12; Math (B+, 4 credits) = 3.3×4=13.2; History (A-, 3 credits) = 3.7×3=11.1. GPA = (12+13.2+11.1) / (3+4+3) = 36.3/10 = 3.63.',
+  },
+  {
+    q: 'Can I use this calculator if my course doesn\'t use percentages?',
+    a: 'Yes. If your assignments are scored as points (e.g., 45/50), convert them to a percentage first by dividing the points earned by the total points possible and multiplying by 100 (45/50 × 100 = 90%). Enter that percentage as the score. The weight field accepts any number—you can enter actual credit hours or point values as weights, and the calculator will correctly proportion them. The weighted average will still be accurate regardless of what scale you use for weights.',
+  },
+];
+---
+
+<Layout
+  title="Grade Calculator - Free GPA & Grade Average Calculator | CalcSpeed"
+  description="Calculate your weighted grade average, letter grade, and GPA equivalent. Add any number of assignments with custom weights. Free online grade and GPA calculator."
+  schema={schema}
+>
+  <Header />
+
+  <main class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+    <div class="mb-8">
+      <h1 class="text-3xl sm:text-4xl font-bold text-gray-900 mb-2">Grade Calculator</h1>
+      <p class="text-gray-500">Add your assignments, scores, and weights to calculate your weighted average and GPA.</p>
+    </div>
+
+    <AdSlot slot={1} />
+
+    <div class="bg-white border border-gray-200 rounded-2xl shadow-sm overflow-hidden">
+      <div class="p-6 sm:p-8">
+        <div class="flex items-center justify-between mb-6">
+          <h2 class="font-semibold text-gray-900 text-lg">Assignments</h2>
+          <button id="add-row" type="button"
+            class="flex items-center gap-2 bg-blue-600 text-white text-sm font-medium px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+            </svg>
+            Add Assignment
+          </button>
+        </div>
+
+        <!-- Header row -->
+        <div class="grid grid-cols-12 gap-2 mb-2 text-xs text-gray-500 uppercase tracking-wider px-1">
+          <div class="col-span-5">Assignment Name</div>
+          <div class="col-span-3">Score (%)</div>
+          <div class="col-span-3">Weight (%)</div>
+          <div class="col-span-1"></div>
+        </div>
+
+        <div id="rows-container" class="space-y-2">
+          <!-- Rows filled by JS -->
+        </div>
+
+        <!-- Results -->
+        <div class="mt-8 border-t border-gray-100 pt-6">
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <div class="bg-blue-50 border border-blue-100 rounded-xl p-5 text-center">
+              <div class="text-sm text-blue-600 mb-1">Weighted Average</div>
+              <div id="result-avg" class="text-4xl font-bold font-mono text-blue-700">—</div>
+              <div class="text-xs text-gray-400 mt-1">out of 100%</div>
+            </div>
+            <div class="bg-gray-50 border border-gray-100 rounded-xl p-5 text-center">
+              <div class="text-sm text-gray-600 mb-1">Letter Grade</div>
+              <div id="result-letter" class="text-4xl font-bold font-mono text-gray-900">—</div>
+            </div>
+            <div class="bg-gray-50 border border-gray-100 rounded-xl p-5 text-center">
+              <div class="text-sm text-gray-600 mb-1">GPA Equivalent</div>
+              <div id="result-gpa" class="text-4xl font-bold font-mono text-gray-900">—</div>
+              <div class="text-xs text-gray-400 mt-1">on 4.0 scale</div>
+            </div>
+          </div>
+          <div id="weight-warning" class="hidden mt-3 text-sm text-amber-600 bg-amber-50 border border-amber-200 rounded-lg px-4 py-2">
+            ⚠ Total weight is not 100%. The weighted average will be calculated proportionally.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Grade Scale Reference -->
+    <div class="mt-6 bg-white border border-gray-200 rounded-2xl shadow-sm p-6">
+      <h3 class="font-semibold text-gray-900 mb-4">Standard Grading Scale</h3>
+      <div class="grid grid-cols-4 sm:grid-cols-7 gap-2 text-sm text-center">
+        {[
+          {grade:'A+', range:'97-100', gpa:'4.0', color:'bg-green-100 text-green-800'},
+          {grade:'A', range:'93-96', gpa:'4.0', color:'bg-green-100 text-green-800'},
+          {grade:'A-', range:'90-92', gpa:'3.7', color:'bg-green-100 text-green-800'},
+          {grade:'B+', range:'87-89', gpa:'3.3', color:'bg-blue-100 text-blue-800'},
+          {grade:'B', range:'83-86', gpa:'3.0', color:'bg-blue-100 text-blue-800'},
+          {grade:'B-', range:'80-82', gpa:'2.7', color:'bg-blue-100 text-blue-800'},
+          {grade:'C+', range:'77-79', gpa:'2.3', color:'bg-yellow-100 text-yellow-800'},
+          {grade:'C', range:'73-76', gpa:'2.0', color:'bg-yellow-100 text-yellow-800'},
+          {grade:'C-', range:'70-72', gpa:'1.7', color:'bg-yellow-100 text-yellow-800'},
+          {grade:'D+', range:'67-69', gpa:'1.3', color:'bg-orange-100 text-orange-800'},
+          {grade:'D', range:'63-66', gpa:'1.0', color:'bg-orange-100 text-orange-800'},
+          {grade:'D-', range:'60-62', gpa:'0.7', color:'bg-orange-100 text-orange-800'},
+          {grade:'F', range:'0-59', gpa:'0.0', color:'bg-red-100 text-red-800'},
+        ].map(g => (
+          <div class={`rounded-lg p-2 ${g.color}`}>
+            <div class="font-bold text-base">{g.grade}</div>
+            <div class="text-xs opacity-75">{g.range}%</div>
+            <div class="text-xs font-mono">{g.gpa}</div>
+          </div>
+        ))}
+      </div>
+    </div>
+
+    <AdSlot slot={2} />
+
+    <section class="mt-12">
+      <h2 class="text-2xl font-bold text-gray-900 mb-6">Frequently Asked Questions</h2>
+      <div class="space-y-4">
+        {faqs.map(faq => (
+          <details class="bg-white border border-gray-200 rounded-xl overflow-hidden group">
+            <summary class="flex items-center justify-between p-5 cursor-pointer list-none font-medium text-gray-900 hover:text-blue-600">
+              {faq.q}
+              <svg class="w-5 h-5 text-gray-400 flex-shrink-0 ml-4 group-open:rotate-180 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+              </svg>
+            </summary>
+            <div class="px-5 pb-5 text-gray-600 text-sm leading-relaxed border-t border-gray-100 pt-4">
+              {faq.a}
+            </div>
+          </details>
+        ))}
+      </div>
+    </section>
+
+    <AdSlot slot={3} />
+
+    <section class="mt-12">
+      <h2 class="text-xl font-bold text-gray-900 mb-3">How to Use the Grade Calculator</h2>
+      <p class="text-gray-600 text-[15px] leading-relaxed mb-4">
+        Enter each assignment or grade category with its name, your score as a percentage, and its weight in the overall course. For example: "Homework" at 92% with a weight of 25, "Midterm" at 78% with a weight of 35, and "Final" at 88% with a weight of 40. The calculator immediately shows your weighted average, corresponding letter grade, and GPA equivalent.
+      </p>
+      <p class="text-gray-600 text-[15px] leading-relaxed">
+        You can add as many rows as you need using the "Add Assignment" button, and remove any row with the delete icon. If you're planning ahead and want to see what score you need on an upcoming assignment to hit a target grade, try entering your best estimate and adjusting the score to see how it affects your average. Use it as a live grade simulator throughout the semester to stay on top of where you stand academically.
+      </p>
+    </section>
+  </main>
+
+  <Footer />
+</Layout>
+
+<script>
+  interface Row { name: string; score: number; weight: number; }
+
+  let rows: Row[] = [
+    { name: 'Homework', score: 92, weight: 25 },
+    { name: 'Midterm Exam', score: 78, weight: 35 },
+    { name: 'Final Exam', score: 88, weight: 40 },
+  ];
+
+  const gradeScale = [
+    { min: 97, letter: 'A+', gpa: 4.0 },
+    { min: 93, letter: 'A', gpa: 4.0 },
+    { min: 90, letter: 'A-', gpa: 3.7 },
+    { min: 87, letter: 'B+', gpa: 3.3 },
+    { min: 83, letter: 'B', gpa: 3.0 },
+    { min: 80, letter: 'B-', gpa: 2.7 },
+    { min: 77, letter: 'C+', gpa: 2.3 },
+    { min: 73, letter: 'C', gpa: 2.0 },
+    { min: 70, letter: 'C-', gpa: 1.7 },
+    { min: 67, letter: 'D+', gpa: 1.3 },
+    { min: 63, letter: 'D', gpa: 1.0 },
+    { min: 60, letter: 'D-', gpa: 0.7 },
+    { min: 0, letter: 'F', gpa: 0.0 },
+  ];
+
+  function getLetter(avg: number) {
+    return gradeScale.find(g => avg >= g.min) || gradeScale[gradeScale.length - 1];
+  }
+
+  function renderRows() {
+    const container = document.getElementById('rows-container') as HTMLElement;
+    container.innerHTML = '';
+    rows.forEach((row, i) => {
+      const div = document.createElement('div');
+      div.className = 'grid grid-cols-12 gap-2 items-center';
+      div.innerHTML = `
+        <div class="col-span-5">
+          <input type="text" value="${row.name}" data-idx="${i}" data-field="name"
+            placeholder="Assignment name"
+            class="row-input w-full px-3 py-2 border border-gray-200 rounded-lg text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
+        </div>
+        <div class="col-span-3 relative">
+          <input type="number" value="${row.score}" min="0" max="100" step="0.1" data-idx="${i}" data-field="score"
+            class="row-input w-full pl-3 pr-7 py-2 border border-gray-200 rounded-lg font-mono text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
+          <span class="absolute inset-y-0 right-2 flex items-center text-gray-400 text-xs font-mono">%</span>
+        </div>
+        <div class="col-span-3 relative">
+          <input type="number" value="${row.weight}" min="0" max="100" step="1" data-idx="${i}" data-field="weight"
+            class="row-input w-full pl-3 pr-7 py-2 border border-gray-200 rounded-lg font-mono text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
+          <span class="absolute inset-y-0 right-2 flex items-center text-gray-400 text-xs font-mono">%</span>
+        </div>
+        <div class="col-span-1 flex justify-center">
+          <button type="button" data-del="${i}" class="del-btn text-gray-300 hover:text-red-500 transition-colors p-1">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+        </div>
+      `;
+      container.appendChild(div);
+    });
+
+    container.querySelectorAll('.row-input').forEach(el => {
+      el.addEventListener('input', (e) => {
+        const target = e.target as HTMLInputElement;
+        const idx = parseInt(target.dataset.idx || '0');
+        const field = target.dataset.field as keyof Row;
+        if (field === 'name') rows[idx].name = target.value;
+        else (rows[idx] as any)[field] = parseFloat(target.value) || 0;
+        calculate();
+      });
+    });
+
+    container.querySelectorAll('.del-btn').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        const idx = parseInt((btn as HTMLElement).dataset.del || '0');
+        if (rows.length > 1) {
+          rows.splice(idx, 1);
+          renderRows();
+          calculate();
+        }
+      });
+    });
+  }
+
+  function calculate() {
+    const valid = rows.filter(r => !isNaN(r.score) && !isNaN(r.weight) && r.weight > 0);
+    if (valid.length === 0) return;
+
+    const totalWeight = valid.reduce((s, r) => s + r.weight, 0);
+    const weightedSum = valid.reduce((s, r) => s + r.score * r.weight, 0);
+    const avg = weightedSum / totalWeight;
+
+    const grade = getLetter(avg);
+
+    (document.getElementById('result-avg') as HTMLElement).textContent = avg.toFixed(2) + '%';
+    (document.getElementById('result-letter') as HTMLElement).textContent = grade.letter;
+    (document.getElementById('result-gpa') as HTMLElement).textContent = grade.gpa.toFixed(1);
+
+    const warn = document.getElementById('weight-warning') as HTMLElement;
+    if (Math.abs(totalWeight - 100) > 0.5) {
+      warn.classList.remove('hidden');
+    } else {
+      warn.classList.add('hidden');
+    }
+  }
+
+  document.getElementById('add-row')?.addEventListener('click', () => {
+    rows.push({ name: '', score: 0, weight: 0 });
+    renderRows();
+    calculate();
+  });
+
+  renderRows();
+  calculate();
+</script>

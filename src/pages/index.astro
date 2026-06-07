@@ -1,0 +1,180 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+
+const calculators = [
+  {
+    href: '/mortgage-calculator',
+    icon: '🏠',
+    title: 'Mortgage Calculator',
+    description: 'Calculate monthly payments, total interest, and view your full amortization schedule.',
+    badge: 'Most Popular',
+  },
+  {
+    href: '/bmi-calculator',
+    icon: '⚖️',
+    title: 'BMI Calculator',
+    description: 'Find your Body Mass Index instantly with US and metric unit support.',
+  },
+  {
+    href: '/age-calculator',
+    icon: '🎂',
+    title: 'Age Calculator',
+    description: 'Calculate your exact age in years, months, and days from any date.',
+  },
+  {
+    href: '/salary-calculator',
+    icon: '💵',
+    title: 'Salary Calculator',
+    description: 'Estimate your take-home pay after federal and state taxes for all 50 US states.',
+  },
+  {
+    href: '/calorie-calculator',
+    icon: '🔥',
+    title: 'Calorie Calculator',
+    description: 'Calculate your daily calorie needs based on age, gender, height, weight and activity.',
+  },
+  {
+    href: '/percentage-calculator',
+    icon: '%',
+    title: 'Percentage Calculator',
+    description: 'Three modes: find a percentage, reverse-calculate, or compute percentage change.',
+  },
+  {
+    href: '/time-calculator',
+    icon: '⏱️',
+    title: 'Time Calculator',
+    description: 'Add and subtract time durations and convert between US time zones instantly.',
+  },
+  {
+    href: '/grade-calculator',
+    icon: '📝',
+    title: 'Grade Calculator',
+    description: 'Calculate your weighted grade average, letter grade, and GPA equivalent.',
+  },
+];
+
+const schema = {
+  '@context': 'https://schema.org',
+  '@type': 'WebSite',
+  name: 'CalcSpeed',
+  url: 'https://calcspeed.com',
+  description: 'Fast, free online calculators for mortgage, BMI, age, salary, calories, percentage, time, and grades.',
+  potentialAction: {
+    '@type': 'SearchAction',
+    target: 'https://calcspeed.com/?q={search_term_string}',
+    'query-input': 'required name=search_term_string',
+  },
+};
+---
+
+<Layout
+  title="CalcSpeed - Fast, Free Online Calculators"
+  description="Free online calculators for mortgage, BMI, age, salary, calories, percentage, time, and grades. Instant results, no sign-up required. Built for US users."
+  schema={schema}
+>
+  <Header />
+
+  <main>
+    <!-- Hero -->
+    <section class="bg-gradient-to-b from-blue-50 to-white py-16 sm:py-24">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <div class="inline-flex items-center gap-2 bg-blue-100 text-blue-700 text-sm font-medium px-3 py-1 rounded-full mb-6">
+          <span class="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></span>
+          100% Free &mdash; No Sign-Up Required
+        </div>
+        <h1 class="text-4xl sm:text-5xl lg:text-6xl font-bold text-gray-900 tracking-tight mb-6">
+          Fast, Free Calculators<br class="hidden sm:block" />
+          <span class="text-blue-600">for Every Need</span>
+        </h1>
+        <p class="text-lg sm:text-xl text-gray-500 max-w-2xl mx-auto mb-10">
+          Get instant, accurate results for mortgage payments, BMI, salary, calories, and more. No account needed&mdash;just answers.
+        </p>
+        <a
+          href="/mortgage-calculator"
+          class="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-3 rounded-lg transition-colors shadow-sm"
+        >
+          Try Mortgage Calculator
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+          </svg>
+        </a>
+      </div>
+    </section>
+
+    <!-- Calculator Grid -->
+    <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+      <h2 class="text-2xl font-bold text-gray-900 mb-2">All Calculators</h2>
+      <p class="text-gray-500 mb-8">Choose a tool below to get started instantly.</p>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        {calculators.map(calc => (
+          <a
+            href={calc.href}
+            class="group relative bg-white border border-gray-200 rounded-xl p-6 hover:border-blue-300 hover:shadow-md transition-all duration-200"
+          >
+            {calc.badge && (
+              <span class="absolute top-4 right-4 bg-blue-600 text-white text-xs font-semibold px-2 py-0.5 rounded-full">
+                {calc.badge}
+              </span>
+            )}
+            <div class="text-3xl mb-3">{calc.icon}</div>
+            <h3 class="font-semibold text-gray-900 mb-2 group-hover:text-blue-600 transition-colors">
+              {calc.title}
+            </h3>
+            <p class="text-sm text-gray-500 leading-relaxed">{calc.description}</p>
+            <div class="mt-4 flex items-center text-sm font-medium text-blue-600 opacity-0 group-hover:opacity-100 transition-opacity">
+              Open Calculator
+              <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+              </svg>
+            </div>
+          </a>
+        ))}
+      </div>
+    </section>
+
+    <!-- SEO Content Block -->
+    <section class="bg-gray-50 border-y border-gray-100">
+      <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-14">
+        <h2 class="text-2xl font-bold text-gray-900 mb-4">Free Online Calculators for Every Situation</h2>
+        <div class="prose prose-gray max-w-none text-gray-600 leading-relaxed space-y-4 text-[15px]">
+          <p>
+            CalcSpeed offers a suite of free online calculators designed to give you instant, accurate answers to your most important financial, health, and everyday calculations. Whether you're planning a home purchase and need a reliable mortgage calculator, tracking your fitness goals with a BMI calculator, or figuring out your take-home pay with our US salary calculator, every tool is built for speed and simplicity.
+          </p>
+          <p>
+            Unlike generic spreadsheet tools, CalcSpeed calculators are purpose-built for real-world US scenarios. Our mortgage calculator accounts for standard US loan terms of 15, 20, and 30 years. Our salary calculator covers all 50 states with up-to-date tax bracket estimates. Our calorie calculator uses the scientifically validated Mifflin-St Jeor equation trusted by nutritionists nationwide.
+          </p>
+          <p>
+            All calculations happen instantly in your browser&mdash;nothing is sent to a server, nothing is stored, and no account is ever required. CalcSpeed is completely free to use, mobile-friendly, and loads in under a second. Bookmark it today and have a reliable calculation tool ready whenever you need it.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Trust Bar -->
+    <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
+        <div>
+          <div class="text-2xl font-bold text-blue-600 font-mono">8+</div>
+          <div class="text-sm text-gray-500 mt-1">Free Calculators</div>
+        </div>
+        <div>
+          <div class="text-2xl font-bold text-blue-600 font-mono">0</div>
+          <div class="text-sm text-gray-500 mt-1">Sign-Up Required</div>
+        </div>
+        <div>
+          <div class="text-2xl font-bold text-blue-600 font-mono">&lt;1s</div>
+          <div class="text-sm text-gray-500 mt-1">Page Load Time</div>
+        </div>
+        <div>
+          <div class="text-2xl font-bold text-blue-600 font-mono">100%</div>
+          <div class="text-sm text-gray-500 mt-1">Client-Side &amp; Private</div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <Footer />
+</Layout>

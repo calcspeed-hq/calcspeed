@@ -1,0 +1,353 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import AdSlot from '../components/AdSlot.astro';
+
+const schema = {
+  '@context': 'https://schema.org',
+  '@type': 'WebApplication',
+  name: 'Mortgage Calculator',
+  url: 'https://calcspeed.com/mortgage-calculator',
+  description: 'Free US mortgage calculator. Calculate monthly payments, total interest paid, and view a full amortization schedule for 15, 20, or 30 year loans.',
+  applicationCategory: 'FinanceApplication',
+  operatingSystem: 'Web Browser',
+  offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
+};
+
+const faqs = [
+  {
+    q: 'How is a monthly mortgage payment calculated?',
+    a: 'Your monthly mortgage payment is calculated using the principal loan amount, the annual interest rate divided by 12 (monthly rate), and the number of monthly payments (loan term in years × 12). The standard formula is: M = P[r(1+r)^n]/[(1+r)^n-1], where P is the principal, r is the monthly interest rate, and n is the number of payments. This ensures each payment covers the interest accrued that month plus a portion of the principal.',
+  },
+  {
+    q: 'What is the difference between the loan amount and the home price?',
+    a: 'The home price is the total purchase price of the property. The loan amount (principal) is the home price minus your down payment. For example, if you buy a $400,000 home with a 20% down payment ($80,000), your loan amount is $320,000. Lenders use the loan amount to calculate your monthly payment and total interest costs.',
+  },
+  {
+    q: 'What is a good interest rate for a mortgage in the US?',
+    a: 'Mortgage interest rates fluctuate based on the Federal Reserve benchmark rate, lender competition, and your personal credit profile. Historically, a rate below the national average for your loan type is considered good. As of recent years, 30-year fixed rates have ranged from roughly 3% to 8%. Your credit score, down payment size, and loan type (conventional, FHA, VA) all significantly impact the rate you\'re offered.',
+  },
+  {
+    q: 'Should I choose a 15-year or 30-year mortgage?',
+    a: 'A 15-year mortgage has higher monthly payments but you pay far less total interest and build equity faster. A 30-year mortgage has lower monthly payments, giving you more cash flow flexibility, but you\'ll pay significantly more in interest over the life of the loan. If you can comfortably afford the higher 15-year payment, you\'ll save tens of thousands in interest. If cash flow is a concern, the 30-year provides a safety buffer.',
+  },
+  {
+    q: 'What is PMI and when do I have to pay it?',
+    a: 'Private Mortgage Insurance (PMI) is required on conventional loans when your down payment is less than 20% of the home price. PMI protects the lender if you default. It typically costs 0.5%–1.5% of the loan amount per year, added to your monthly payment. Once you reach 20% equity in the home (either through payments or appreciation), you can request PMI cancellation. FHA loans have their own mortgage insurance requirements that may last the life of the loan.',
+  },
+  {
+    q: 'What is an amortization schedule?',
+    a: 'An amortization schedule is a complete table of monthly mortgage payments showing exactly how much of each payment goes toward interest versus reducing your principal balance. In the early years of a mortgage, the majority of each payment is interest. Over time, as the principal decreases, the interest portion shrinks and more of each payment goes to principal. This is why you build equity slowly at first and faster later.',
+  },
+  {
+    q: 'How much house can I afford?',
+    a: 'A common guideline is that your total housing costs (mortgage payment, property taxes, insurance, HOA fees) should not exceed 28% of your gross monthly income. Your total debt payments (housing plus car loans, student loans, credit cards) should stay under 36%. This is called the 28/36 rule. However, your personal financial situation, savings, job stability, and local cost of living should all factor into what\'s truly affordable for you.',
+  },
+  {
+    q: 'Does this calculator include property taxes and insurance?',
+    a: 'This calculator computes your principal and interest (P&I) payment, which is the core mortgage payment. Property taxes and homeowner\'s insurance are typically collected by lenders in an escrow account and added to your monthly payment, but they vary widely by location and insurer. To get your full estimated monthly housing cost, add your expected property tax and insurance amounts to the P&I figure shown here.',
+  },
+];
+---
+
+<Layout
+  title="Mortgage Calculator - Free US Home Loan Calculator | CalcSpeed"
+  description="Calculate your monthly mortgage payment, total interest, and amortization schedule. Free US home loan calculator for 15, 20, and 30-year fixed mortgages."
+  schema={schema}
+>
+  <Header />
+
+  <main class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+    <div class="mb-8">
+      <h1 class="text-3xl sm:text-4xl font-bold text-gray-900 mb-2">Mortgage Calculator</h1>
+      <p class="text-gray-500">Calculate your monthly payment, total interest, and see your full amortization schedule.</p>
+    </div>
+
+    <AdSlot slot={1} />
+
+    <!-- Calculator -->
+    <div class="bg-white border border-gray-200 rounded-2xl shadow-sm overflow-hidden">
+      <div class="grid md:grid-cols-2 divide-y md:divide-y-0 md:divide-x divide-gray-100">
+
+        <!-- Inputs -->
+        <div class="p-6 sm:p-8">
+          <h2 class="font-semibold text-gray-900 mb-6 text-lg">Loan Details</h2>
+          <div class="space-y-5">
+
+            <div>
+              <label for="home-price" class="block text-sm font-medium text-gray-700 mb-1">Home Price</label>
+              <div class="relative">
+                <span class="absolute inset-y-0 left-3 flex items-center text-gray-400 font-mono">$</span>
+                <input id="home-price" type="number" value="400000" min="0" step="1000"
+                  class="w-full pl-8 pr-4 py-2.5 border border-gray-200 rounded-lg font-mono text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                />
+              </div>
+            </div>
+
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">Down Payment</label>
+              <div class="flex gap-2">
+                <div class="relative flex-1">
+                  <span class="absolute inset-y-0 left-3 flex items-center text-gray-400 font-mono">$</span>
+                  <input id="down-payment" type="number" value="80000" min="0" step="1000"
+                    class="w-full pl-8 pr-4 py-2.5 border border-gray-200 rounded-lg font-mono text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  />
+                </div>
+                <div class="relative w-24">
+                  <input id="down-payment-pct" type="number" value="20" min="0" max="100" step="0.5"
+                    class="w-full pl-3 pr-8 py-2.5 border border-gray-200 rounded-lg font-mono text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  />
+                  <span class="absolute inset-y-0 right-3 flex items-center text-gray-400 font-mono">%</span>
+                </div>
+              </div>
+            </div>
+
+            <div>
+              <label for="loan-term" class="block text-sm font-medium text-gray-700 mb-1">Loan Term</label>
+              <div class="flex gap-2">
+                {[15, 20, 30].map(yr => (
+                  <button
+                    type="button"
+                    data-term={yr}
+                    class={`term-btn flex-1 py-2.5 rounded-lg border text-sm font-semibold transition-colors ${yr === 30 ? 'bg-blue-600 text-white border-blue-600' : 'bg-white text-gray-600 border-gray-200 hover:border-blue-300'}`}
+                  >
+                    {yr} yr
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <div>
+              <label for="interest-rate" class="block text-sm font-medium text-gray-700 mb-1">Annual Interest Rate</label>
+              <div class="relative">
+                <input id="interest-rate" type="number" value="7.0" min="0" max="30" step="0.05"
+                  class="w-full pl-4 pr-8 py-2.5 border border-gray-200 rounded-lg font-mono text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                />
+                <span class="absolute inset-y-0 right-3 flex items-center text-gray-400 font-mono">%</span>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- Results -->
+        <div class="p-6 sm:p-8 bg-gray-50">
+          <h2 class="font-semibold text-gray-900 mb-6 text-lg">Your Estimate</h2>
+          <div class="space-y-4">
+            <div class="bg-white rounded-xl border border-blue-100 p-5 text-center shadow-sm">
+              <div class="text-sm text-gray-500 mb-1">Monthly Payment</div>
+              <div id="result-monthly" class="text-4xl font-bold font-mono text-blue-600">$2,661</div>
+              <div class="text-xs text-gray-400 mt-1">Principal &amp; Interest only</div>
+            </div>
+            <div class="grid grid-cols-2 gap-3">
+              <div class="bg-white rounded-lg border border-gray-100 p-4">
+                <div class="text-xs text-gray-500 mb-1">Total Interest</div>
+                <div id="result-interest" class="text-xl font-semibold font-mono text-gray-900">$557,912</div>
+              </div>
+              <div class="bg-white rounded-lg border border-gray-100 p-4">
+                <div class="text-xs text-gray-500 mb-1">Total Cost</div>
+                <div id="result-total" class="text-xl font-semibold font-mono text-gray-900">$957,912</div>
+              </div>
+            </div>
+            <div class="bg-white rounded-lg border border-gray-100 p-4">
+              <div class="text-xs text-gray-500 mb-1">Loan Amount</div>
+              <div id="result-principal" class="text-xl font-semibold font-mono text-gray-900">$320,000</div>
+            </div>
+
+            <!-- Donut breakdown -->
+            <div class="pt-2">
+              <div class="flex items-center justify-between text-xs text-gray-500 mb-1">
+                <span>Principal</span>
+                <span id="pct-principal" class="font-mono">37%</span>
+              </div>
+              <div class="h-3 bg-gray-100 rounded-full overflow-hidden">
+                <div id="bar-principal" class="h-full bg-blue-600 rounded-full transition-all" style="width:37%"></div>
+              </div>
+              <div class="flex items-center justify-between text-xs text-gray-500 mt-2 mb-1">
+                <span>Interest</span>
+                <span id="pct-interest" class="font-mono">63%</span>
+              </div>
+              <div class="h-3 bg-gray-100 rounded-full overflow-hidden">
+                <div id="bar-interest" class="h-full bg-orange-400 rounded-full transition-all" style="width:63%"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Amortization -->
+      <div class="border-t border-gray-100 p-6 sm:p-8">
+        <div class="flex items-center justify-between mb-4">
+          <h2 class="font-semibold text-gray-900">Amortization Schedule</h2>
+          <button id="toggle-amort" type="button" class="text-sm text-blue-600 hover:underline font-medium">
+            Show All Years
+          </button>
+        </div>
+        <div class="overflow-x-auto">
+          <table class="w-full text-sm">
+            <thead>
+              <tr class="text-left text-xs text-gray-500 uppercase tracking-wider border-b border-gray-100">
+                <th class="pb-2 pr-4">Month</th>
+                <th class="pb-2 pr-4">Payment</th>
+                <th class="pb-2 pr-4">Principal</th>
+                <th class="pb-2 pr-4">Interest</th>
+                <th class="pb-2">Balance</th>
+              </tr>
+            </thead>
+            <tbody id="amort-table" class="font-mono divide-y divide-gray-50">
+              <!-- Filled by JS -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <AdSlot slot={2} />
+
+    <!-- FAQ -->
+    <section class="mt-12">
+      <h2 class="text-2xl font-bold text-gray-900 mb-6">Frequently Asked Questions</h2>
+      <div class="space-y-4">
+        {faqs.map((faq, i) => (
+          <details class="bg-white border border-gray-200 rounded-xl overflow-hidden group">
+            <summary class="flex items-center justify-between p-5 cursor-pointer list-none font-medium text-gray-900 hover:text-blue-600">
+              {faq.q}
+              <svg class="w-5 h-5 text-gray-400 flex-shrink-0 ml-4 group-open:rotate-180 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+              </svg>
+            </summary>
+            <div class="px-5 pb-5 text-gray-600 text-sm leading-relaxed border-t border-gray-100 pt-4">
+              {faq.a}
+            </div>
+          </details>
+        ))}
+      </div>
+    </section>
+
+    <AdSlot slot={3} />
+
+    <!-- Content -->
+    <section class="mt-12 prose prose-gray max-w-none text-[15px]">
+      <h2 class="text-xl font-bold text-gray-900 mb-3">How to Use the CalcSpeed Mortgage Calculator</h2>
+      <p class="text-gray-600 leading-relaxed mb-4">
+        Enter the home price, your down payment amount (or adjust the percentage), select your loan term, and input the annual interest rate your lender has quoted. Your monthly principal and interest payment updates instantly as you type. The calculator also shows your total interest cost over the life of the loan and your total repayment amount, so you can see the full picture of what a mortgage really costs.
+      </p>
+      <p class="text-gray-600 leading-relaxed">
+        Scroll down to view the amortization schedule, which shows exactly how each monthly payment is split between interest and principal reduction. In the early years of a 30-year mortgage, you might be surprised to see that most of your payment is interest. This is completely normal&mdash;it's how amortization works. Use the "Show All Years" toggle to view the complete schedule, or compare different loan terms and rates to find the best fit for your budget and financial goals.
+      </p>
+    </section>
+  </main>
+
+  <Footer />
+</Layout>
+
+<script>
+  const fmt = (n: number) => '$' + Math.round(n).toLocaleString('en-US');
+
+  let loanTerm = 30;
+
+  function calculate() {
+    const homePrice = parseFloat((document.getElementById('home-price') as HTMLInputElement).value) || 0;
+    const downPayment = parseFloat((document.getElementById('down-payment') as HTMLInputElement).value) || 0;
+    const rate = parseFloat((document.getElementById('interest-rate') as HTMLInputElement).value) || 0;
+    const principal = Math.max(0, homePrice - downPayment);
+    const n = loanTerm * 12;
+    const r = rate / 100 / 12;
+
+    let monthly = 0;
+    if (r === 0) {
+      monthly = principal / n;
+    } else {
+      monthly = principal * (r * Math.pow(1 + r, n)) / (Math.pow(1 + r, n) - 1);
+    }
+
+    const totalCost = monthly * n;
+    const totalInterest = totalCost - principal;
+
+    (document.getElementById('result-monthly') as HTMLElement).textContent = fmt(monthly);
+    (document.getElementById('result-interest') as HTMLElement).textContent = fmt(totalInterest);
+    (document.getElementById('result-total') as HTMLElement).textContent = fmt(totalCost);
+    (document.getElementById('result-principal') as HTMLElement).textContent = fmt(principal);
+
+    const pctP = totalCost > 0 ? Math.round((principal / totalCost) * 100) : 0;
+    const pctI = 100 - pctP;
+    (document.getElementById('pct-principal') as HTMLElement).textContent = pctP + '%';
+    (document.getElementById('pct-interest') as HTMLElement).textContent = pctI + '%';
+    (document.getElementById('bar-principal') as HTMLElement).style.width = pctP + '%';
+    (document.getElementById('bar-interest') as HTMLElement).style.width = pctI + '%';
+
+    buildAmortTable(principal, r, monthly, n);
+  }
+
+  let showAll = false;
+
+  function buildAmortTable(principal: number, r: number, monthly: number, n: number) {
+    const tbody = document.getElementById('amort-table') as HTMLTableSectionElement;
+    tbody.innerHTML = '';
+    let balance = principal;
+    const limit = showAll ? n : 12;
+
+    for (let i = 1; i <= limit; i++) {
+      const interest = balance * r;
+      const princ = monthly - interest;
+      balance = Math.max(0, balance - princ);
+
+      const tr = document.createElement('tr');
+      tr.className = 'text-gray-600 hover:bg-blue-50 transition-colors';
+      tr.innerHTML = `
+        <td class="py-2 pr-4 text-gray-500">${i}</td>
+        <td class="py-2 pr-4">${fmt(monthly)}</td>
+        <td class="py-2 pr-4 text-blue-600">${fmt(princ)}</td>
+        <td class="py-2 pr-4 text-orange-500">${fmt(interest)}</td>
+        <td class="py-2">${fmt(balance)}</td>
+      `;
+      tbody.appendChild(tr);
+    }
+  }
+
+  // Down payment sync
+  document.getElementById('home-price')?.addEventListener('input', () => {
+    const hp = parseFloat((document.getElementById('home-price') as HTMLInputElement).value) || 0;
+    const pct = parseFloat((document.getElementById('down-payment-pct') as HTMLInputElement).value) || 0;
+    (document.getElementById('down-payment') as HTMLInputElement).value = String(Math.round(hp * pct / 100));
+    calculate();
+  });
+
+  document.getElementById('down-payment')?.addEventListener('input', () => {
+    const hp = parseFloat((document.getElementById('home-price') as HTMLInputElement).value) || 0;
+    const dp = parseFloat((document.getElementById('down-payment') as HTMLInputElement).value) || 0;
+    (document.getElementById('down-payment-pct') as HTMLInputElement).value = hp > 0 ? String(Math.round((dp / hp) * 100 * 10) / 10) : '0';
+    calculate();
+  });
+
+  document.getElementById('down-payment-pct')?.addEventListener('input', () => {
+    const hp = parseFloat((document.getElementById('home-price') as HTMLInputElement).value) || 0;
+    const pct = parseFloat((document.getElementById('down-payment-pct') as HTMLInputElement).value) || 0;
+    (document.getElementById('down-payment') as HTMLInputElement).value = String(Math.round(hp * pct / 100));
+    calculate();
+  });
+
+  document.getElementById('interest-rate')?.addEventListener('input', calculate);
+
+  document.querySelectorAll('.term-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      loanTerm = parseInt((btn as HTMLElement).dataset.term || '30');
+      document.querySelectorAll('.term-btn').forEach(b => {
+        b.classList.remove('bg-blue-600', 'text-white', 'border-blue-600');
+        b.classList.add('bg-white', 'text-gray-600', 'border-gray-200');
+      });
+      btn.classList.add('bg-blue-600', 'text-white', 'border-blue-600');
+      btn.classList.remove('bg-white', 'text-gray-600', 'border-gray-200');
+      calculate();
+    });
+  });
+
+  document.getElementById('toggle-amort')?.addEventListener('click', () => {
+    showAll = !showAll;
+    (document.getElementById('toggle-amort') as HTMLElement).textContent = showAll ? 'Show First Year' : 'Show All Years';
+    calculate();
+  });
+
+  calculate();
+</script>

@@ -1,0 +1,373 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import AdSlot from '../components/AdSlot.astro';
+
+const schema = {
+  '@context': 'https://schema.org',
+  '@type': 'WebApplication',
+  name: 'Salary Calculator',
+  url: 'https://calcspeed.com/salary-calculator',
+  description: 'US paycheck calculator. Estimate gross pay per period, federal taxes, state taxes, and take-home pay for all 50 states.',
+  applicationCategory: 'FinanceApplication',
+  operatingSystem: 'Web Browser',
+  offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
+};
+
+const states = [
+  { code: 'AL', name: 'Alabama', rate: 0.05 },
+  { code: 'AK', name: 'Alaska', rate: 0 },
+  { code: 'AZ', name: 'Arizona', rate: 0.025 },
+  { code: 'AR', name: 'Arkansas', rate: 0.049 },
+  { code: 'CA', name: 'California', rate: 0.093, sdi: 0.013 },
+  { code: 'CO', name: 'Colorado', rate: 0.044 },
+  { code: 'CT', name: 'Connecticut', rate: 0.0699 },
+  { code: 'DE', name: 'Delaware', rate: 0.066 },
+  { code: 'FL', name: 'Florida', rate: 0 },
+  { code: 'GA', name: 'Georgia', rate: 0.0549 },
+  { code: 'HI', name: 'Hawaii', rate: 0.09 },
+  { code: 'ID', name: 'Idaho', rate: 0.058 },
+  { code: 'IL', name: 'Illinois', rate: 0.0495 },
+  { code: 'IN', name: 'Indiana', rate: 0.0305 },
+  { code: 'IA', name: 'Iowa', rate: 0.06 },
+  { code: 'KS', name: 'Kansas', rate: 0.057 },
+  { code: 'KY', name: 'Kentucky', rate: 0.045 },
+  { code: 'LA', name: 'Louisiana', rate: 0.0425 },
+  { code: 'ME', name: 'Maine', rate: 0.0715 },
+  { code: 'MD', name: 'Maryland', rate: 0.0575 },
+  { code: 'MA', name: 'Massachusetts', rate: 0.05 },
+  { code: 'MI', name: 'Michigan', rate: 0.0425 },
+  { code: 'MN', name: 'Minnesota', rate: 0.0985 },
+  { code: 'MS', name: 'Mississippi', rate: 0.05 },
+  { code: 'MO', name: 'Missouri', rate: 0.054 },
+  { code: 'MT', name: 'Montana', rate: 0.0675 },
+  { code: 'NE', name: 'Nebraska', rate: 0.0664 },
+  { code: 'NV', name: 'Nevada', rate: 0 },
+  { code: 'NH', name: 'New Hampshire', rate: 0 },
+  { code: 'NJ', name: 'New Jersey', rate: 0.0897 },
+  { code: 'NM', name: 'New Mexico', rate: 0.059 },
+  { code: 'NY', name: 'New York', rate: 0.0685 },
+  { code: 'NC', name: 'North Carolina', rate: 0.0499 },
+  { code: 'ND', name: 'North Dakota', rate: 0.029 },
+  { code: 'OH', name: 'Ohio', rate: 0.04 },
+  { code: 'OK', name: 'Oklahoma', rate: 0.0475 },
+  { code: 'OR', name: 'Oregon', rate: 0.099 },
+  { code: 'PA', name: 'Pennsylvania', rate: 0.0307 },
+  { code: 'RI', name: 'Rhode Island', rate: 0.0599 },
+  { code: 'SC', name: 'South Carolina', rate: 0.065 },
+  { code: 'SD', name: 'South Dakota', rate: 0 },
+  { code: 'TN', name: 'Tennessee', rate: 0 },
+  { code: 'TX', name: 'Texas', rate: 0 },
+  { code: 'UT', name: 'Utah', rate: 0.0485 },
+  { code: 'VT', name: 'Vermont', rate: 0.0875 },
+  { code: 'VA', name: 'Virginia', rate: 0.0575 },
+  { code: 'WA', name: 'Washington', rate: 0 },
+  { code: 'WV', name: 'West Virginia', rate: 0.065 },
+  { code: 'WI', name: 'Wisconsin', rate: 0.0765 },
+  { code: 'WY', name: 'Wyoming', rate: 0 },
+  { code: 'DC', name: 'Washington D.C.', rate: 0.0895 },
+];
+
+const faqs = [
+  {
+    q: 'How is federal income tax calculated on my paycheck?',
+    a: 'Federal income tax is calculated using progressive tax brackets set by the IRS. For 2026, single filers pay 10% on the first $11,925, 12% on income from $11,926–$48,475, 22% on $48,476–$103,350, 24% on $103,351–$197,300, 32% on $197,301–$250,525, 35% on $250,526–$626,350, and 37% above that. Each bracket only applies to the income within that range, not your entire salary. This calculator uses these 2026 brackets to estimate your federal withholding.',
+  },
+  {
+    q: 'What is FICA and how much is withheld?',
+    a: 'FICA stands for Federal Insurance Contributions Act and covers Social Security and Medicare taxes. For 2026, Social Security tax is 6.2% of your gross pay up to the annual wage base limit of $184,500. Medicare tax is 1.45% with no income limit. High earners (above $200,000 single/$250,000 joint) pay an additional 0.9% Medicare surtax on wages above that threshold. These are separate from income taxes and are not reflected in standard income tax bracket calculations.',
+  },
+  {
+    q: 'Which states have no state income tax?',
+    a: 'Nine states currently have no state income tax on wages: Alaska, Florida, Nevada, New Hampshire (though it taxes investment income), South Dakota, Tennessee, Texas, Washington, and Wyoming. If you live in one of these states, your take-home pay will be significantly higher compared to high-tax states like California, New York, or Oregon. Note that no-income-tax states often offset this with higher sales taxes or property taxes.',
+  },
+  {
+    q: 'What is the difference between biweekly and semi-monthly pay?',
+    a: 'Biweekly pay means you receive a paycheck every two weeks, resulting in 26 paychecks per year. Two months of the year you\'ll receive three paychecks instead of two. Semi-monthly pay means you receive a paycheck twice a month (typically the 1st and 15th), resulting in exactly 24 paychecks per year. The annual gross pay is the same either way, but each individual paycheck is slightly larger with semi-monthly pay.',
+  },
+  {
+    q: 'What deductions reduce my taxable income?',
+    a: 'Several deductions can reduce the income subject to federal tax. Pre-tax contributions to a 401(k) or traditional IRA reduce your taxable income dollar-for-dollar. Health insurance premiums paid through an employer plan are often pre-tax. Health Savings Account (HSA) contributions are also pre-tax. The standard deduction for 2026 is $16,100 for single filers, $32,200 for married filing jointly, and $24,150 for head of household. This calculator applies the 2026 standard deduction before computing federal tax and does not account for all possible deductions or credits.',
+  },
+  {
+    q: 'How does filing status affect my paycheck?',
+    a: 'Your federal tax filing status—single, married filing jointly, married filing separately, or head of household—determines which tax bracket thresholds apply to you. Married filing jointly generally results in lower taxes because the bracket thresholds are doubled. Head of household has its own bracket structure that falls between single and married rates. This calculator uses single filing status as a baseline estimate; adjust accordingly for your actual situation.',
+  },
+  {
+    q: 'What is take-home pay?',
+    a: 'Take-home pay (also called net pay) is the amount deposited into your bank account after all taxes and deductions have been withheld from your gross paycheck. It equals your gross pay minus federal income tax, state income tax, FICA (Social Security and Medicare), and any voluntary deductions like 401(k) contributions or health insurance premiums. This calculator estimates the tax portion; actual take-home pay will differ based on your specific withholding elections and voluntary deductions.',
+  },
+  {
+    q: 'Is this salary calculator accurate?',
+    a: 'This calculator provides a reasonable estimate of your take-home pay based on approximate federal tax brackets and state income tax rates. It is intended for planning and educational purposes only. Actual withholding depends on your W-4 elections, filing status, specific state rules, local/city taxes (not included), pre-tax deductions, and other factors. For precise payroll calculations, consult your employer\'s payroll department, a CPA, or tax software.',
+  },
+];
+---
+
+<Layout
+  title="Salary Calculator - US Paycheck & Take-Home Pay Calculator | CalcSpeed"
+  description="Calculate your 2026 US take-home pay after federal and state income taxes. Uses 2026 IRS tax brackets, $184,500 Social Security wage base, and rates for all 50 states. Free salary calculator."
+  schema={schema}
+>
+  <Header />
+
+  <main class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+    <div class="mb-8">
+      <h1 class="text-3xl sm:text-4xl font-bold text-gray-900 mb-2">Salary Calculator</h1>
+      <p class="text-gray-500">Estimate your US take-home pay after federal and state taxes for any pay frequency.</p>
+    </div>
+
+    <div class="bg-amber-50 border border-amber-200 rounded-xl p-4 mb-6 text-sm text-amber-800">
+      <strong>2026 Tax Year Estimate:</strong> Uses 2026 IRS federal brackets, $184,500 Social Security wage base, and approximate state income tax rates. Does not account for all deductions, credits, local taxes, or individual W-4 elections. Consult a tax professional for precise figures.
+    </div>
+
+    <AdSlot slot={1} />
+
+    <div class="bg-white border border-gray-200 rounded-2xl shadow-sm overflow-hidden">
+      <div class="grid md:grid-cols-2 divide-y md:divide-y-0 md:divide-x divide-gray-100">
+
+        <!-- Inputs -->
+        <div class="p-6 sm:p-8">
+          <h2 class="font-semibold text-gray-900 mb-6 text-lg">Your Details</h2>
+          <div class="space-y-5">
+
+            <div>
+              <label for="annual-salary" class="block text-sm font-medium text-gray-700 mb-1">Annual Salary</label>
+              <div class="relative">
+                <span class="absolute inset-y-0 left-3 flex items-center text-gray-400 font-mono">$</span>
+                <input id="annual-salary" type="number" value="75000" min="0" step="1000"
+                  class="w-full pl-8 pr-4 py-2.5 border border-gray-200 rounded-lg font-mono text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+            </div>
+
+            <div>
+              <label for="pay-frequency" class="block text-sm font-medium text-gray-700 mb-1">Pay Frequency</label>
+              <select id="pay-frequency"
+                class="w-full px-4 py-2.5 border border-gray-200 rounded-lg text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
+              >
+                <option value="52">Weekly (52x/year)</option>
+                <option value="26" selected>Biweekly (26x/year)</option>
+                <option value="24">Semi-Monthly (24x/year)</option>
+                <option value="12">Monthly (12x/year)</option>
+              </select>
+            </div>
+
+            <div>
+              <label for="state-select" class="block text-sm font-medium text-gray-700 mb-1">State</label>
+              <select id="state-select"
+                class="w-full px-4 py-2.5 border border-gray-200 rounded-lg text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
+              >
+                {states.map(s => (
+                  <option value={`${s.code}|${s.rate}`} selected={s.code === 'TX'}>
+                    {s.name}{s.rate === 0 ? ' (No Income Tax)' : ''}{s.code === 'CA' ? ' + 1.3% SDI' : ''}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div>
+              <label for="filing-status" class="block text-sm font-medium text-gray-700 mb-1">Filing Status</label>
+              <select id="filing-status"
+                class="w-full px-4 py-2.5 border border-gray-200 rounded-lg text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
+              >
+                <option value="single">Single</option>
+                <option value="married">Married Filing Jointly</option>
+                <option value="hoh">Head of Household</option>
+              </select>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- Results -->
+        <div class="p-6 sm:p-8 bg-gray-50">
+          <h2 class="font-semibold text-gray-900 mb-6 text-lg">Per Paycheck Estimate</h2>
+
+          <div class="bg-white rounded-xl border border-blue-100 p-5 text-center shadow-sm mb-4">
+            <div class="text-sm text-gray-500 mb-1">Estimated Take-Home Pay</div>
+            <div id="result-takehome" class="text-4xl font-bold font-mono text-blue-600">$2,163</div>
+            <div id="result-freq-label" class="text-xs text-gray-400 mt-1">per paycheck (biweekly)</div>
+          </div>
+
+          <div class="space-y-3">
+            <div class="flex justify-between items-center bg-white rounded-lg border border-gray-100 p-3">
+              <span class="text-sm text-gray-600">Gross Pay</span>
+              <span id="result-gross" class="font-mono font-semibold text-gray-900">$2,885</span>
+            </div>
+            <div class="flex justify-between items-center bg-white rounded-lg border border-gray-100 p-3">
+              <span class="text-sm text-gray-600">Federal Income Tax <span class="text-xs text-gray-400">(est.)</span></span>
+              <span id="result-federal" class="font-mono font-semibold text-red-500">-$519</span>
+            </div>
+            <div class="flex justify-between items-center bg-white rounded-lg border border-gray-100 p-3">
+              <span class="text-sm text-gray-600">State Income Tax <span class="text-xs text-gray-400">(est.)</span></span>
+              <span id="result-state" class="font-mono font-semibold text-red-500">$0</span>
+            </div>
+            <div class="flex justify-between items-center bg-white rounded-lg border border-gray-100 p-3">
+              <span class="text-sm text-gray-600">FICA (SS + Medicare)</span>
+              <span id="result-fica" class="font-mono font-semibold text-red-500">-$221</span>
+            </div>
+            <div class="border-t border-gray-200 pt-3">
+              <div class="text-sm text-gray-500 font-medium mb-1">Annual Breakdown</div>
+              <div class="flex justify-between text-sm">
+                <span class="text-gray-600">Annual Take-Home</span>
+                <span id="result-annual-takehome" class="font-mono font-semibold text-gray-900">$56,238</span>
+              </div>
+              <div class="flex justify-between text-sm mt-1">
+                <span class="text-gray-600">Effective Tax Rate</span>
+                <span id="result-effective-rate" class="font-mono font-semibold text-gray-900">18.5%</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <AdSlot slot={2} />
+
+    <section class="mt-12">
+      <h2 class="text-2xl font-bold text-gray-900 mb-6">Frequently Asked Questions</h2>
+      <div class="space-y-4">
+        {faqs.map(faq => (
+          <details class="bg-white border border-gray-200 rounded-xl overflow-hidden group">
+            <summary class="flex items-center justify-between p-5 cursor-pointer list-none font-medium text-gray-900 hover:text-blue-600">
+              {faq.q}
+              <svg class="w-5 h-5 text-gray-400 flex-shrink-0 ml-4 group-open:rotate-180 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+              </svg>
+            </summary>
+            <div class="px-5 pb-5 text-gray-600 text-sm leading-relaxed border-t border-gray-100 pt-4">
+              {faq.a}
+            </div>
+          </details>
+        ))}
+      </div>
+    </section>
+
+    <AdSlot slot={3} />
+
+    <section class="mt-12">
+      <h2 class="text-xl font-bold text-gray-900 mb-3">About This Salary Calculator</h2>
+      <p class="text-gray-600 text-[15px] leading-relaxed mb-4">
+        This salary calculator estimates your paycheck using 2026 federal income tax brackets and approximate state income tax rates for all 50 US states plus Washington D.C. Enter your annual salary, choose your pay frequency, and select your state to see a per-paycheck breakdown of gross pay, federal tax withholding, state tax withholding, and estimated take-home.
+      </p>
+      <p class="text-gray-600 text-[15px] leading-relaxed">
+        The calculator also shows FICA taxes (Social Security at 6.2% and Medicare at 1.45%), giving you a complete picture of payroll deductions. The effective tax rate displayed is your combined estimated federal and state income tax as a percentage of gross income. Remember this is an estimate—your actual paycheck will vary based on your W-4 withholding elections, pre-tax deductions, and other factors specific to your employer and situation.
+      </p>
+    </section>
+  </main>
+
+  <Footer />
+</Layout>
+
+<script>
+  const fmt = (n: number) => '$' + Math.abs(Math.round(n)).toLocaleString('en-US');
+
+  // 2026 federal brackets
+  const singleBrackets = [
+    { min: 0, max: 11925, rate: 0.10 },
+    { min: 11925, max: 48475, rate: 0.12 },
+    { min: 48475, max: 103350, rate: 0.22 },
+    { min: 103350, max: 197300, rate: 0.24 },
+    { min: 197300, max: 250525, rate: 0.32 },
+    { min: 250525, max: 626350, rate: 0.35 },
+    { min: 626350, max: Infinity, rate: 0.37 },
+  ];
+
+  const marriedBrackets = [
+    { min: 0, max: 23850, rate: 0.10 },
+    { min: 23850, max: 96950, rate: 0.12 },
+    { min: 96950, max: 206700, rate: 0.22 },
+    { min: 206700, max: 394600, rate: 0.24 },
+    { min: 394600, max: 501050, rate: 0.32 },
+    { min: 501050, max: 751600, rate: 0.35 },
+    { min: 751600, max: Infinity, rate: 0.37 },
+  ];
+
+  const hohBrackets = [
+    { min: 0, max: 17000, rate: 0.10 },
+    { min: 17000, max: 64850, rate: 0.12 },
+    { min: 64850, max: 103350, rate: 0.22 },
+    { min: 103350, max: 197300, rate: 0.24 },
+    { min: 197300, max: 250500, rate: 0.32 },
+    { min: 250500, max: 626350, rate: 0.35 },
+    { min: 626350, max: Infinity, rate: 0.37 },
+  ];
+
+  // Standard deductions 2026
+  const stdDed: Record<string, number> = { single: 16100, married: 32200, hoh: 24150 };
+
+  function calcFederalTax(taxable: number, filing: string): number {
+    const brackets = filing === 'married' ? marriedBrackets : filing === 'hoh' ? hohBrackets : singleBrackets;
+    let tax = 0;
+    for (const b of brackets) {
+      if (taxable <= b.min) break;
+      tax += (Math.min(taxable, b.max) - b.min) * b.rate;
+    }
+    return Math.max(0, tax);
+  }
+
+  function calculate() {
+    const annual = parseFloat((document.getElementById('annual-salary') as HTMLInputElement).value) || 0;
+    const periods = parseInt((document.getElementById('pay-frequency') as HTMLSelectElement).value) || 26;
+    const stateVal = (document.getElementById('state-select') as HTMLSelectElement).value;
+    const [stateCode, stateRateStr] = stateVal.split('|');
+    const stateRate = parseFloat(stateRateStr) || 0;
+    const filing = (document.getElementById('filing-status') as HTMLSelectElement).value;
+
+    const gross = annual / periods;
+
+    // Federal tax (annual, then per period)
+    const deduction = stdDed[filing] || 16100;
+    const taxableAnnual = Math.max(0, annual - deduction);
+    const federalAnnual = calcFederalTax(taxableAnnual, filing);
+    const federalPer = federalAnnual / periods;
+
+    // State income tax (flat rate estimate)
+    const stateAnnual = annual * stateRate;
+    const statePer = stateAnnual / periods;
+
+    // California SDI 2026: 1.3% on all wages (no wage cap)
+    const caSDIAnnual = stateCode === 'CA' ? annual * 0.013 : 0;
+    const caSDIPer = caSDIAnnual / periods;
+
+    // FICA 2026
+    const ssAnnual = Math.min(annual, 184500) * 0.062;
+    const medicareAnnual = annual * 0.0145;
+    const addlMedicare = Math.max(0, annual - 200000) * 0.009;
+    const ficaAnnual = ssAnnual + medicareAnnual + addlMedicare;
+    const ficaPer = ficaAnnual / periods;
+
+    const takeHomePer = gross - federalPer - statePer - caSDIPer - ficaPer;
+    const takeHomeAnnual = takeHomePer * periods;
+    const effectiveRate = annual > 0 ? ((federalAnnual + stateAnnual + caSDIAnnual) / annual) * 100 : 0;
+
+    const freqLabels: Record<string, string> = { '52': 'weekly', '26': 'biweekly', '24': 'semi-monthly', '12': 'monthly' };
+
+    (document.getElementById('result-takehome') as HTMLElement).textContent = fmt(takeHomePer);
+    (document.getElementById('result-freq-label') as HTMLElement).textContent = `per paycheck (${freqLabels[String(periods)] || ''})`;
+    (document.getElementById('result-gross') as HTMLElement).textContent = fmt(gross);
+    (document.getElementById('result-federal') as HTMLElement).textContent = `-${fmt(federalPer)}`;
+
+    const stateLabel = document.getElementById('result-state') as HTMLElement;
+    if (stateRate === 0 && stateCode !== 'CA') {
+      stateLabel.textContent = '$0 (no state tax)';
+    } else if (stateCode === 'CA') {
+      stateLabel.textContent = `-${fmt(statePer)} (+${fmt(caSDIPer)} SDI)`;
+    } else {
+      stateLabel.textContent = `-${fmt(statePer)}`;
+    }
+
+    (document.getElementById('result-fica') as HTMLElement).textContent = `-${fmt(ficaPer)}`;
+    (document.getElementById('result-annual-takehome') as HTMLElement).textContent = fmt(takeHomeAnnual);
+    (document.getElementById('result-effective-rate') as HTMLElement).textContent = effectiveRate.toFixed(1) + '%';
+  }
+
+  ['annual-salary', 'pay-frequency', 'state-select', 'filing-status'].forEach(id => {
+    document.getElementById(id)?.addEventListener('change', calculate);
+    document.getElementById(id)?.addEventListener('input', calculate);
+  });
+
+  calculate();
+</script>

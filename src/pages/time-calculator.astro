@@ -1,0 +1,334 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import AdSlot from '../components/AdSlot.astro';
+
+const schema = {
+  '@context': 'https://schema.org',
+  '@type': 'WebApplication',
+  name: 'Time Calculator',
+  url: 'https://calcspeed.com/time-calculator',
+  description: 'Add or subtract time durations and convert between major US time zones. Free online time calculator with instant results.',
+  applicationCategory: 'UtilityApplication',
+  operatingSystem: 'Web Browser',
+  offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
+};
+
+const faqs = [
+  {
+    q: 'How do I add time durations together?',
+    a: 'To add time durations, add the hours, minutes, and seconds separately, then carry over: if seconds exceed 59, subtract 60 from seconds and add 1 to minutes; if minutes exceed 59, subtract 60 from minutes and add 1 to hours. For example, 2h 45m + 1h 30m = 3h 75m = 4h 15m. Our calculator handles this automatically, so you can enter any number of hours, minutes, and seconds and get the correct summed result instantly.',
+  },
+  {
+    q: 'How do I subtract time?',
+    a: 'Time subtraction works similarly to addition but with borrowing. If the seconds or minutes being subtracted are larger than the current seconds or minutes, you borrow from the next larger unit. For example, 3h 10m − 1h 45m: first borrow 1 hour (making it 2h 70m), then subtract to get 1h 25m. The calculator handles all the borrowing logic automatically so you don\'t need to do the mental gymnastics.',
+  },
+  {
+    q: 'What are the US time zones?',
+    a: 'The continental United States has four main time zones: Eastern Time (ET, UTC-5/UTC-4 with DST), Central Time (CT, UTC-6/UTC-5), Mountain Time (MT, UTC-7/UTC-6), and Pacific Time (PT, UTC-8/UTC-7). Alaska uses Alaska Time (AKT, UTC-9/UTC-8) and Hawaii uses Hawaii-Aleutian Standard Time (HAST, UTC-10, no DST). During Daylight Saving Time (second Sunday in March to first Sunday in November), most states move clocks forward one hour.',
+  },
+  {
+    q: 'What is Daylight Saving Time and when does it change?',
+    a: 'Daylight Saving Time (DST) is the practice of advancing clocks by one hour during summer months to extend evening daylight. In the United States, clocks "spring forward" at 2:00 AM on the second Sunday of March and "fall back" at 2:00 AM on the first Sunday of November. Hawaii and most of Arizona (except the Navajo Nation) do not observe DST. Several other US territories also do not observe DST.',
+  },
+  {
+    q: 'How many hours difference is Eastern Time from Pacific Time?',
+    a: 'Eastern Time (ET) is 3 hours ahead of Pacific Time (PT) year-round. When it\'s 12:00 PM (noon) in New York (Eastern), it\'s 9:00 AM in Los Angeles (Pacific). When it\'s 9:00 PM in Los Angeles, it\'s midnight (12:00 AM next day) in New York. This difference remains constant because both zones observe Daylight Saving Time and shift simultaneously.',
+  },
+  {
+    q: 'How do I convert between time zones for a meeting?',
+    a: 'To schedule a cross-timezone meeting, determine the current time in your timezone, then add or subtract the offset between your zone and the target zone. Eastern is +3 from Pacific, +2 from Mountain, +1 from Central. So a 2:00 PM Eastern meeting is 11:00 AM Pacific, 12:00 PM Mountain, 1:00 PM Central. Use the time zone converter below to check any time conversion instantly without mental math.',
+  },
+  {
+    q: 'How many hours are in a week or month?',
+    a: 'A week has exactly 168 hours (24 hours × 7 days). A month has approximately 720–744 hours depending on the month (28–31 days × 24 hours). A year has 8,760 hours in a standard year and 8,784 hours in a leap year. A work month typically contains about 160–173 work hours based on 40-hour weeks, accounting for varying numbers of weekdays per month.',
+  },
+  {
+    q: 'What is the difference between duration and clock time?',
+    a: 'Duration is the length of a time interval (e.g., 2 hours and 30 minutes). Clock time is a specific point in the day (e.g., 3:45 PM). The time duration calculator adds or subtracts durations from each other. If you want to find what clock time it will be 2h 30m after 1:15 PM, that\'s a different calculation (start time + duration = end time). Both types are useful in scheduling, work time tracking, and event planning.',
+  },
+];
+
+const timezones = [
+  { id: 'America/New_York', label: 'Eastern (ET)' },
+  { id: 'America/Chicago', label: 'Central (CT)' },
+  { id: 'America/Denver', label: 'Mountain (MT)' },
+  { id: 'America/Los_Angeles', label: 'Pacific (PT)' },
+  { id: 'America/Anchorage', label: 'Alaska (AKT)' },
+  { id: 'Pacific/Honolulu', label: 'Hawaii (HST)' },
+];
+---
+
+<Layout
+  title="Time Calculator - Add & Subtract Time Online | CalcSpeed"
+  description="Add or subtract hours, minutes, and seconds instantly. Convert between US time zones including Eastern, Central, Mountain, Pacific, Alaska, and Hawaii. Free time calculator."
+  schema={schema}
+>
+  <Header />
+
+  <main class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+    <div class="mb-8">
+      <h1 class="text-3xl sm:text-4xl font-bold text-gray-900 mb-2">Time Calculator</h1>
+      <p class="text-gray-500">Add or subtract time durations, and convert between US time zones.</p>
+    </div>
+
+    <AdSlot slot={1} />
+
+    <div class="grid md:grid-cols-2 gap-6">
+      <!-- Duration Calculator -->
+      <div class="bg-white border border-gray-200 rounded-2xl shadow-sm p-6 sm:p-8">
+        <h2 class="font-semibold text-gray-900 mb-1 text-lg">Duration Calculator</h2>
+        <p class="text-sm text-gray-500 mb-6">Add or subtract hours, minutes, and seconds.</p>
+
+        <div class="space-y-3">
+          <!-- Row 1 -->
+          <div class="flex items-center gap-2">
+            <div class="flex-1 grid grid-cols-3 gap-2">
+              <div>
+                <label class="text-xs text-gray-500 mb-1 block">Hours</label>
+                <input id="d1-h" type="number" value="2" min="0"
+                  class="w-full px-3 py-2 border border-gray-200 rounded-lg font-mono text-center focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+              <div>
+                <label class="text-xs text-gray-500 mb-1 block">Minutes</label>
+                <input id="d1-m" type="number" value="45" min="0" max="59"
+                  class="w-full px-3 py-2 border border-gray-200 rounded-lg font-mono text-center focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+              <div>
+                <label class="text-xs text-gray-500 mb-1 block">Seconds</label>
+                <input id="d1-s" type="number" value="30" min="0" max="59"
+                  class="w-full px-3 py-2 border border-gray-200 rounded-lg font-mono text-center focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+            </div>
+          </div>
+
+          <!-- Operation toggle -->
+          <div class="flex gap-3 items-center">
+            <button data-op="+" id="op-add" type="button"
+              class="op-btn px-4 py-2 rounded-lg border text-sm font-semibold bg-blue-600 text-white border-blue-600">
+              + Add
+            </button>
+            <button data-op="-" id="op-sub" type="button"
+              class="op-btn px-4 py-2 rounded-lg border text-sm font-semibold bg-white text-gray-600 border-gray-200 hover:border-blue-300">
+              − Subtract
+            </button>
+          </div>
+
+          <!-- Row 2 -->
+          <div class="flex-1 grid grid-cols-3 gap-2">
+            <div>
+              <label class="text-xs text-gray-500 mb-1 block">Hours</label>
+              <input id="d2-h" type="number" value="1" min="0"
+                class="w-full px-3 py-2 border border-gray-200 rounded-lg font-mono text-center focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+            </div>
+            <div>
+              <label class="text-xs text-gray-500 mb-1 block">Minutes</label>
+              <input id="d2-m" type="number" value="20" min="0" max="59"
+                class="w-full px-3 py-2 border border-gray-200 rounded-lg font-mono text-center focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+            </div>
+            <div>
+              <label class="text-xs text-gray-500 mb-1 block">Seconds</label>
+              <input id="d2-s" type="number" value="15" min="0" max="59"
+                class="w-full px-3 py-2 border border-gray-200 rounded-lg font-mono text-center focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+            </div>
+          </div>
+        </div>
+
+        <div class="mt-6 bg-blue-50 border border-blue-100 rounded-xl p-5">
+          <div class="text-sm text-blue-600 mb-1">Result</div>
+          <div id="dur-result" class="text-3xl font-bold font-mono text-blue-700">4h 5m 45s</div>
+          <div id="dur-result-alt" class="text-sm text-gray-500 mt-2">= 14,745 seconds total</div>
+        </div>
+      </div>
+
+      <!-- Timezone Converter -->
+      <div class="bg-white border border-gray-200 rounded-2xl shadow-sm p-6 sm:p-8">
+        <h2 class="font-semibold text-gray-900 mb-1 text-lg">Time Zone Converter</h2>
+        <p class="text-sm text-gray-500 mb-6">Convert a time between US time zones.</p>
+
+        <div class="space-y-4">
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Input Time</label>
+            <input id="tz-time" type="time" value="14:00"
+              class="w-full px-4 py-2.5 border border-gray-200 rounded-lg font-mono text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">From Time Zone</label>
+            <select id="tz-from"
+              class="w-full px-4 py-2.5 border border-gray-200 rounded-lg text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
+            >
+              {timezones.map(tz => (
+                <option value={tz.id}>{tz.label}</option>
+              ))}
+            </select>
+          </div>
+        </div>
+
+        <div class="mt-5 space-y-2">
+          <div class="text-sm font-medium text-gray-700 mb-2">Equivalent Times</div>
+          {timezones.map(tz => (
+            <div class="flex justify-between items-center bg-gray-50 rounded-lg px-4 py-2.5">
+              <span class="text-sm text-gray-600">{tz.label}</span>
+              <span data-tz={tz.id} class="tz-result font-mono font-semibold text-gray-900 text-sm">—</span>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+
+    <AdSlot slot={2} />
+
+    <section class="mt-12">
+      <h2 class="text-2xl font-bold text-gray-900 mb-6">Frequently Asked Questions</h2>
+      <div class="space-y-4">
+        {faqs.map(faq => (
+          <details class="bg-white border border-gray-200 rounded-xl overflow-hidden group">
+            <summary class="flex items-center justify-between p-5 cursor-pointer list-none font-medium text-gray-900 hover:text-blue-600">
+              {faq.q}
+              <svg class="w-5 h-5 text-gray-400 flex-shrink-0 ml-4 group-open:rotate-180 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+              </svg>
+            </summary>
+            <div class="px-5 pb-5 text-gray-600 text-sm leading-relaxed border-t border-gray-100 pt-4">
+              {faq.a}
+            </div>
+          </details>
+        ))}
+      </div>
+    </section>
+
+    <AdSlot slot={3} />
+
+    <section class="mt-12">
+      <h2 class="text-xl font-bold text-gray-900 mb-3">About This Time Calculator</h2>
+      <p class="text-gray-600 text-[15px] leading-relaxed mb-4">
+        The duration calculator lets you add or subtract two time durations expressed in hours, minutes, and seconds. It automatically handles carrying and borrowing across units—so if your addition results in 75 minutes, it correctly converts to 1 hour and 15 minutes. This is useful for tracking work hours, workout durations, travel time estimates, or any scenario where you need to combine time intervals.
+      </p>
+      <p class="text-gray-600 text-[15px] leading-relaxed">
+        The time zone converter shows you the equivalent clock time across all six major US time zones simultaneously. Enter a time and your source time zone, and all conversions update instantly. The converter uses your browser's built-in internationalization API for accurate timezone offsets including Daylight Saving Time adjustments—so results are always correct for the current date.
+      </p>
+    </section>
+  </main>
+
+  <Footer />
+</Layout>
+
+<script>
+  let operation = '+';
+
+  function calcDuration() {
+    const h1 = parseInt((document.getElementById('d1-h') as HTMLInputElement).value) || 0;
+    const m1 = parseInt((document.getElementById('d1-m') as HTMLInputElement).value) || 0;
+    const s1 = parseInt((document.getElementById('d1-s') as HTMLInputElement).value) || 0;
+    const h2 = parseInt((document.getElementById('d2-h') as HTMLInputElement).value) || 0;
+    const m2 = parseInt((document.getElementById('d2-m') as HTMLInputElement).value) || 0;
+    const s2 = parseInt((document.getElementById('d2-s') as HTMLInputElement).value) || 0;
+
+    const total1 = h1 * 3600 + m1 * 60 + s1;
+    const total2 = h2 * 3600 + m2 * 60 + s2;
+    let totalSec = operation === '+' ? total1 + total2 : total1 - total2;
+
+    if (totalSec < 0) {
+      (document.getElementById('dur-result') as HTMLElement).textContent = 'Invalid (negative result)';
+      (document.getElementById('dur-result-alt') as HTMLElement).textContent = 'Check your inputs';
+      return;
+    }
+
+    const rh = Math.floor(totalSec / 3600);
+    const rm = Math.floor((totalSec % 3600) / 60);
+    const rs = totalSec % 60;
+
+    (document.getElementById('dur-result') as HTMLElement).textContent =
+      `${rh}h ${rm}m ${rs}s`;
+    (document.getElementById('dur-result-alt') as HTMLElement).textContent =
+      `= ${totalSec.toLocaleString('en-US')} seconds total`;
+  }
+
+  function calcTimezones() {
+    const timeVal = (document.getElementById('tz-time') as HTMLInputElement).value;
+    const fromTz = (document.getElementById('tz-from') as HTMLSelectElement).value;
+    if (!timeVal) return;
+
+    const [hourStr, minStr] = timeVal.split(':');
+    const hour = parseInt(hourStr);
+    const min = parseInt(minStr);
+
+    const today = new Date();
+    const year = today.getFullYear();
+    const month = String(today.getMonth() + 1).padStart(2, '0');
+    const day = String(today.getDate()).padStart(2, '0');
+    const dateStr = `${year}-${month}-${day}T${String(hour).padStart(2,'0')}:${String(min).padStart(2,'0')}:00`;
+
+    const zones = [
+      'America/New_York','America/Chicago','America/Denver',
+      'America/Los_Angeles','America/Anchorage','Pacific/Honolulu'
+    ];
+
+    const fromFormatter = new Intl.DateTimeFormat('en-US', {
+      timeZone: fromTz, hour: 'numeric', minute: '2-digit', hour12: true
+    });
+
+    // Create a date in the "from" timezone
+    // We parse the time as if it's in the "from" tz
+    const tempDate = new Date(dateStr);
+
+    // Get offset difference
+    const fromOffset = getTimezoneOffsetMinutes(tempDate, fromTz);
+    const utcMs = tempDate.getTime() + fromOffset * 60000;
+
+    zones.forEach(tz => {
+      const el = document.querySelector(`[data-tz="${tz}"]`) as HTMLElement;
+      if (!el) return;
+      const toOffset = getTimezoneOffsetMinutes(new Date(utcMs), tz);
+      const local = new Date(utcMs - toOffset * 60000);
+      const h = local.getUTCHours();
+      const m = local.getUTCMinutes();
+      const ampm = h >= 12 ? 'PM' : 'AM';
+      const displayH = h % 12 || 12;
+      el.textContent = `${displayH}:${String(m).padStart(2,'0')} ${ampm}`;
+      el.className = tz === fromTz
+        ? 'tz-result font-mono font-bold text-blue-600 text-sm'
+        : 'tz-result font-mono font-semibold text-gray-900 text-sm';
+    });
+  }
+
+  function getTimezoneOffsetMinutes(date: Date, tz: string): number {
+    const utcStr = date.toLocaleString('en-US', { timeZone: 'UTC', hour12: false,
+      year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit' });
+    const tzStr = date.toLocaleString('en-US', { timeZone: tz, hour12: false,
+      year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit' });
+    const utcDate = new Date(utcStr.replace(/(\d+)\/(\d+)\/(\d+)/, '$3-$1-$2'));
+    const tzDate = new Date(tzStr.replace(/(\d+)\/(\d+)\/(\d+)/, '$3-$1-$2'));
+    return (utcDate.getTime() - tzDate.getTime()) / 60000;
+  }
+
+  document.querySelectorAll('.op-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      operation = (btn as HTMLElement).dataset.op || '+';
+      document.querySelectorAll('.op-btn').forEach(b => {
+        b.classList.remove('bg-blue-600', 'text-white', 'border-blue-600');
+        b.classList.add('bg-white', 'text-gray-600', 'border-gray-200');
+      });
+      btn.classList.add('bg-blue-600', 'text-white', 'border-blue-600');
+      btn.classList.remove('bg-white', 'text-gray-600', 'border-gray-200');
+      calcDuration();
+    });
+  });
+
+  ['d1-h','d1-m','d1-s','d2-h','d2-m','d2-s'].forEach(id =>
+    document.getElementById(id)?.addEventListener('input', calcDuration));
+
+  ['tz-time','tz-from'].forEach(id =>
+    document.getElementById(id)?.addEventListener('change', calcTimezones));
+
+  calcDuration();
+  calcTimezones();
+</script>

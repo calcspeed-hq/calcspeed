@@ -1,0 +1,72 @@
+---
+const calculators = [
+  { href: '/mortgage-calculator', label: 'Mortgage Calculator' },
+  { href: '/bmi-calculator', label: 'BMI Calculator' },
+  { href: '/age-calculator', label: 'Age Calculator' },
+  { href: '/salary-calculator', label: 'Salary Calculator' },
+  { href: '/calorie-calculator', label: 'Calorie Calculator' },
+  { href: '/percentage-calculator', label: 'Percentage Calculator' },
+  { href: '/time-calculator', label: 'Time Calculator' },
+  { href: '/grade-calculator', label: 'Grade Calculator' },
+];
+
+const company = [
+  { href: '/about', label: 'About' },
+  { href: '/contact', label: 'Contact' },
+  { href: '/privacy', label: 'Privacy Policy' },
+  { href: '/terms', label: 'Terms of Service' },
+];
+---
+
+<footer class="border-t border-gray-100 bg-gray-50 mt-20">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+      <!-- Brand -->
+      <div>
+        <a href="/" class="flex items-center gap-2 mb-4">
+          <div class="w-7 h-7 bg-blue-600 rounded-lg flex items-center justify-center">
+            <span class="text-white font-mono font-bold text-xs">C</span>
+          </div>
+          <span class="font-bold text-lg text-gray-900">CalcSpeed</span>
+        </a>
+        <p class="text-sm text-gray-500 leading-relaxed">
+          Fast, free, and accurate calculators for everyday decisions. No sign-up required.
+        </p>
+      </div>
+
+      <!-- Calculators -->
+      <div>
+        <h3 class="text-sm font-semibold text-gray-900 uppercase tracking-wider mb-4">Calculators</h3>
+        <ul class="space-y-2">
+          {calculators.map(link => (
+            <li>
+              <a href={link.href} class="text-sm text-gray-500 hover:text-blue-600 transition-colors">
+                {link.label}
+              </a>
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      <!-- Company -->
+      <div>
+        <h3 class="text-sm font-semibold text-gray-900 uppercase tracking-wider mb-4">Company</h3>
+        <ul class="space-y-2">
+          {company.map(link => (
+            <li>
+              <a href={link.href} class="text-sm text-gray-500 hover:text-blue-600 transition-colors">
+                {link.label}
+              </a>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </div>
+
+    <div class="mt-10 pt-6 border-t border-gray-200">
+      <p class="text-xs text-gray-400 text-center">
+        &copy; {new Date().getFullYear()} CalcSpeed.com &mdash; All calculators are for informational purposes only. Results are estimates and should not be taken as professional financial, medical, or legal advice.
+      </p>
+    </div>
+  </div>
+</footer>

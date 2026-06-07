@@ -1,0 +1,266 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import AdSlot from '../components/AdSlot.astro';
+
+const schema = {
+  '@context': 'https://schema.org',
+  '@type': 'WebApplication',
+  name: 'Calorie Calculator',
+  url: 'https://calcspeed.com/calorie-calculator',
+  description: 'Calculate your daily calorie needs using the Mifflin-St Jeor equation. Get BMR, TDEE, and calorie targets for weight loss, maintenance, and gain.',
+  applicationCategory: 'HealthApplication',
+  operatingSystem: 'Web Browser',
+  offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
+};
+
+const faqs = [
+  {
+    q: 'What is BMR and how is it calculated?',
+    a: 'BMR stands for Basal Metabolic Rate — the number of calories your body burns at complete rest just to maintain basic physiological functions like breathing, circulation, and cell repair. This calculator uses the Mifflin-St Jeor equation, the most widely validated formula for estimating BMR. For men: BMR = (10 × weight in kg) + (6.25 × height in cm) − (5 × age) + 5. For women: BMR = (10 × weight in kg) + (6.25 × height in cm) − (5 × age) − 161.',
+  },
+  {
+    q: 'What is TDEE?',
+    a: 'TDEE stands for Total Daily Energy Expenditure — the total number of calories you burn in a day when your activity level is factored in. It\'s calculated by multiplying your BMR by an activity factor: 1.2 for sedentary (desk job, little exercise), 1.375 for lightly active (1–3 days/week), 1.55 for moderately active (3–5 days/week), 1.725 for very active (6–7 days/week), and 1.9 for extremely active (physical job or 2x/day training). TDEE represents the calorie amount needed to maintain your current weight.',
+  },
+  {
+    q: 'How many calories should I eat to lose weight?',
+    a: 'A calorie deficit is required for weight loss. A moderate deficit of 500 calories per day below your TDEE produces roughly 1 pound of weight loss per week, which is widely recommended as a sustainable rate. A 1,000 calorie/day deficit targets 2 pounds per week, but can be difficult to sustain and may cause muscle loss without adequate protein intake. This calculator shows targets for moderate (500 cal deficit) and aggressive (1,000 cal deficit) weight loss as a starting point.',
+  },
+  {
+    q: 'How many calories should I eat to gain muscle?',
+    a: 'Building muscle requires a calorie surplus — eating more than your TDEE. A modest surplus of 200–500 calories per day is recommended for lean muscle gain, minimizing fat gain. Larger surpluses ("dirty bulking") build muscle faster but accumulate significantly more fat. Combined with resistance training and sufficient protein intake (around 0.7–1g per pound of body weight), a surplus of 300–500 calories is an effective starting point for most people.',
+  },
+  {
+    q: 'Are these calorie calculations accurate?',
+    a: 'The Mifflin-St Jeor equation is the most accurate widely-used formula for estimating metabolic rate, but like all formulas it provides an estimate. Individual variation in metabolism can be 10–20% above or below the estimate. The activity multipliers are also approximations. Use these numbers as a starting point, track your actual weight change over 2–4 weeks, and adjust calories up or down by 100–200 to fine-tune based on real-world results.',
+  },
+  {
+    q: 'Does my age affect how many calories I need?',
+    a: 'Yes, significantly. BMR decreases with age due to changes in body composition (reduced muscle mass), hormonal changes, and slower cellular metabolism. Most people see a measurable drop in TDEE each decade after age 30. This is one reason why eating habits that maintained a healthy weight in your 20s may lead to gradual weight gain in your 40s and 50s without adjustment. Regular resistance training can help offset age-related muscle loss and metabolic decline.',
+  },
+  {
+    q: 'How does gender affect calorie needs?',
+    a: 'Men generally have higher BMR and TDEE than women of the same height, weight, and age. This is primarily due to men having more skeletal muscle mass on average, which is metabolically more active than fat tissue. Hormonal differences also play a role. Women also experience metabolic changes during pregnancy, lactation, and menopause that affect calorie needs. The Mifflin-St Jeor formula accounts for gender through different constant offsets in the equation.',
+  },
+  {
+    q: 'What should I do with these calorie numbers?',
+    a: 'Use your TDEE as a daily calorie target to maintain your current weight. To lose weight, aim for 300–500 calories below TDEE and track your food intake using an app like Cronometer or MyFitnessPal. Prioritize protein (to preserve muscle), fill the rest with nutrient-dense whole foods, and combine with exercise. Weigh yourself weekly (not daily) and adjust intake based on trends. For personalized advice, especially with health conditions, always consult a registered dietitian.',
+  },
+];
+---
+
+<Layout
+  title="Calorie Calculator - Daily Calorie Needs Calculator | CalcSpeed"
+  description="Calculate your BMR and TDEE using the Mifflin-St Jeor equation. Get daily calorie targets for weight loss, maintenance, and muscle gain based on your age, gender, height, weight, and activity."
+  schema={schema}
+>
+  <Header />
+
+  <main class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+    <div class="mb-8">
+      <h1 class="text-3xl sm:text-4xl font-bold text-gray-900 mb-2">Calorie Calculator</h1>
+      <p class="text-gray-500">Calculate your BMR and daily calorie needs based on the Mifflin-St Jeor equation.</p>
+    </div>
+
+    <AdSlot slot={1} />
+
+    <div class="bg-white border border-gray-200 rounded-2xl shadow-sm overflow-hidden">
+      <div class="grid md:grid-cols-2 divide-y md:divide-y-0 md:divide-x divide-gray-100">
+
+        <!-- Inputs -->
+        <div class="p-6 sm:p-8">
+          <h2 class="font-semibold text-gray-900 mb-6 text-lg">Your Details</h2>
+          <div class="space-y-5">
+
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-2">Gender</label>
+              <div class="flex gap-3">
+                <label class="flex items-center gap-2 cursor-pointer">
+                  <input type="radio" name="gender" value="male" checked class="text-blue-600" id="gender-male" />
+                  <span class="text-sm text-gray-700">Male</span>
+                </label>
+                <label class="flex items-center gap-2 cursor-pointer">
+                  <input type="radio" name="gender" value="female" class="text-blue-600" id="gender-female" />
+                  <span class="text-sm text-gray-700">Female</span>
+                </label>
+              </div>
+            </div>
+
+            <div>
+              <label for="cal-age" class="block text-sm font-medium text-gray-700 mb-1">Age</label>
+              <div class="relative">
+                <input id="cal-age" type="number" value="30" min="15" max="100"
+                  class="w-full pl-4 pr-14 py-2.5 border border-gray-200 rounded-lg font-mono text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+                <span class="absolute inset-y-0 right-3 flex items-center text-gray-400 text-sm">years</span>
+              </div>
+            </div>
+
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">Height</label>
+              <div class="flex gap-2">
+                <div class="relative flex-1">
+                  <input id="cal-height-ft" type="number" value="5" min="1" max="8"
+                    class="w-full pl-4 pr-8 py-2.5 border border-gray-200 rounded-lg font-mono text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  />
+                  <span class="absolute inset-y-0 right-3 flex items-center text-gray-400 text-sm">ft</span>
+                </div>
+                <div class="relative flex-1">
+                  <input id="cal-height-in" type="number" value="10" min="0" max="11"
+                    class="w-full pl-4 pr-8 py-2.5 border border-gray-200 rounded-lg font-mono text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  />
+                  <span class="absolute inset-y-0 right-3 flex items-center text-gray-400 text-sm">in</span>
+                </div>
+              </div>
+            </div>
+
+            <div>
+              <label for="cal-weight" class="block text-sm font-medium text-gray-700 mb-1">Weight (lbs)</label>
+              <div class="relative">
+                <input id="cal-weight" type="number" value="175" min="50" max="700"
+                  class="w-full pl-4 pr-12 py-2.5 border border-gray-200 rounded-lg font-mono text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+                <span class="absolute inset-y-0 right-3 flex items-center text-gray-400 text-sm">lbs</span>
+              </div>
+            </div>
+
+            <div>
+              <label for="activity-level" class="block text-sm font-medium text-gray-700 mb-1">Activity Level</label>
+              <select id="activity-level"
+                class="w-full px-4 py-2.5 border border-gray-200 rounded-lg text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white text-sm"
+              >
+                <option value="1.2">Sedentary (desk job, little/no exercise)</option>
+                <option value="1.375" selected>Lightly Active (1–3 days/week)</option>
+                <option value="1.55">Moderately Active (3–5 days/week)</option>
+                <option value="1.725">Very Active (6–7 days/week)</option>
+                <option value="1.9">Extremely Active (physical job or 2x/day)</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <!-- Results -->
+        <div class="p-6 sm:p-8 bg-gray-50">
+          <h2 class="font-semibold text-gray-900 mb-6 text-lg">Your Daily Calories</h2>
+
+          <div class="space-y-3">
+            <div class="bg-white rounded-lg border border-gray-100 p-4 flex justify-between items-center">
+              <div>
+                <div class="text-xs text-gray-500">BMR (at rest)</div>
+                <div class="text-xs text-gray-400">Basal Metabolic Rate</div>
+              </div>
+              <div id="result-bmr" class="text-2xl font-bold font-mono text-gray-900">1,847</div>
+            </div>
+
+            <div class="bg-white rounded-xl border border-blue-200 p-4 flex justify-between items-center shadow-sm">
+              <div>
+                <div class="text-sm font-semibold text-blue-700">TDEE (Maintenance)</div>
+                <div class="text-xs text-gray-400">To maintain current weight</div>
+              </div>
+              <div id="result-tdee" class="text-3xl font-bold font-mono text-blue-600">2,540</div>
+            </div>
+
+            <div class="bg-orange-50 rounded-lg border border-orange-100 p-4 flex justify-between items-center">
+              <div>
+                <div class="text-sm text-orange-700 font-medium">Weight Loss (−500 cal)</div>
+                <div class="text-xs text-gray-400">~1 lb/week loss</div>
+              </div>
+              <div id="result-loss" class="text-2xl font-bold font-mono text-orange-600">2,040</div>
+            </div>
+
+            <div class="bg-red-50 rounded-lg border border-red-100 p-4 flex justify-between items-center">
+              <div>
+                <div class="text-sm text-red-700 font-medium">Aggressive Loss (−1000 cal)</div>
+                <div class="text-xs text-gray-400">~2 lbs/week loss</div>
+              </div>
+              <div id="result-loss2" class="text-2xl font-bold font-mono text-red-600">1,540</div>
+            </div>
+
+            <div class="bg-green-50 rounded-lg border border-green-100 p-4 flex justify-between items-center">
+              <div>
+                <div class="text-sm text-green-700 font-medium">Muscle Gain (+300 cal)</div>
+                <div class="text-xs text-gray-400">Lean bulk surplus</div>
+              </div>
+              <div id="result-gain" class="text-2xl font-bold font-mono text-green-600">2,840</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <AdSlot slot={2} />
+
+    <section class="mt-12">
+      <h2 class="text-2xl font-bold text-gray-900 mb-6">Frequently Asked Questions</h2>
+      <div class="space-y-4">
+        {faqs.map(faq => (
+          <details class="bg-white border border-gray-200 rounded-xl overflow-hidden group">
+            <summary class="flex items-center justify-between p-5 cursor-pointer list-none font-medium text-gray-900 hover:text-blue-600">
+              {faq.q}
+              <svg class="w-5 h-5 text-gray-400 flex-shrink-0 ml-4 group-open:rotate-180 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+              </svg>
+            </summary>
+            <div class="px-5 pb-5 text-gray-600 text-sm leading-relaxed border-t border-gray-100 pt-4">
+              {faq.a}
+            </div>
+          </details>
+        ))}
+      </div>
+    </section>
+
+    <AdSlot slot={3} />
+
+    <section class="mt-12">
+      <h2 class="text-xl font-bold text-gray-900 mb-3">About This Calorie Calculator</h2>
+      <p class="text-gray-600 text-[15px] leading-relaxed mb-4">
+        This calculator uses the Mifflin-St Jeor equation, the gold standard formula recommended by the American Dietetic Association for estimating Basal Metabolic Rate. It was validated in a comprehensive 2005 study comparing five BMR equations and consistently outperformed alternatives like the Harris-Benedict equation in accuracy across diverse populations.
+      </p>
+      <p class="text-gray-600 text-[15px] leading-relaxed">
+        Your height and weight are converted from US to metric units for the calculation. The resulting BMR is then multiplied by your selected activity factor to produce your TDEE—your total daily calorie burn. From there, the calorie targets for weight loss and gain are straightforward adjustments above or below maintenance. All calculations happen in your browser with no data sent to any server.
+      </p>
+    </section>
+  </main>
+
+  <Footer />
+</Layout>
+
+<script>
+  function calculate() {
+    const gender = (document.querySelector('input[name="gender"]:checked') as HTMLInputElement)?.value || 'male';
+    const age = parseFloat((document.getElementById('cal-age') as HTMLInputElement).value) || 0;
+    const ft = parseFloat((document.getElementById('cal-height-ft') as HTMLInputElement).value) || 0;
+    const inch = parseFloat((document.getElementById('cal-height-in') as HTMLInputElement).value) || 0;
+    const lbs = parseFloat((document.getElementById('cal-weight') as HTMLInputElement).value) || 0;
+    const activity = parseFloat((document.getElementById('activity-level') as HTMLSelectElement).value) || 1.375;
+
+    const kg = lbs * 0.453592;
+    const cm = (ft * 12 + inch) * 2.54;
+
+    let bmr: number;
+    if (gender === 'male') {
+      bmr = (10 * kg) + (6.25 * cm) - (5 * age) + 5;
+    } else {
+      bmr = (10 * kg) + (6.25 * cm) - (5 * age) - 161;
+    }
+
+    const tdee = bmr * activity;
+
+    const round = (n: number) => Math.round(n).toLocaleString('en-US');
+
+    (document.getElementById('result-bmr') as HTMLElement).textContent = round(bmr);
+    (document.getElementById('result-tdee') as HTMLElement).textContent = round(tdee);
+    (document.getElementById('result-loss') as HTMLElement).textContent = round(Math.max(1200, tdee - 500));
+    (document.getElementById('result-loss2') as HTMLElement).textContent = round(Math.max(1200, tdee - 1000));
+    (document.getElementById('result-gain') as HTMLElement).textContent = round(tdee + 300);
+  }
+
+  ['cal-age', 'cal-height-ft', 'cal-height-in', 'cal-weight', 'activity-level'].forEach(id => {
+    document.getElementById(id)?.addEventListener('input', calculate);
+  });
+  document.querySelectorAll('input[name="gender"]').forEach(el => el.addEventListener('change', calculate));
+
+  calculate();
+</script>

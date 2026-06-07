@@ -1,0 +1,82 @@
+---
+const navLinks = [
+  { href: '/mortgage-calculator', label: 'Mortgage' },
+  { href: '/bmi-calculator', label: 'BMI' },
+  { href: '/age-calculator', label: 'Age' },
+  { href: '/salary-calculator', label: 'Salary' },
+  { href: '/calorie-calculator', label: 'Calories' },
+  { href: '/percentage-calculator', label: 'Percentage' },
+  { href: '/time-calculator', label: 'Time' },
+  { href: '/grade-calculator', label: 'Grade' },
+];
+
+const currentPath = Astro.url.pathname;
+---
+
+<header class="border-b border-gray-100 bg-white sticky top-0 z-50 shadow-sm">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="flex items-center justify-between h-16">
+      <!-- Logo -->
+      <a href="/" class="flex items-center gap-2 flex-shrink-0">
+        <div class="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
+          <span class="text-white font-mono font-bold text-sm">C</span>
+        </div>
+        <span class="font-bold text-xl tracking-tight text-gray-900">CalcSpeed</span>
+      </a>
+
+      <!-- Desktop Nav -->
+      <nav class="hidden lg:flex items-center gap-1">
+        {navLinks.map(link => (
+          <a
+            href={link.href}
+            class={`px-3 py-1.5 rounded-md text-sm font-medium transition-colors ${
+              currentPath === link.href
+                ? 'bg-blue-50 text-blue-600'
+                : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
+            }`}
+          >
+            {link.label}
+          </a>
+        ))}
+      </nav>
+
+      <!-- Mobile menu button -->
+      <button
+        id="mobile-menu-btn"
+        type="button"
+        class="lg:hidden p-2 rounded-md text-gray-600 hover:text-gray-900 hover:bg-gray-100"
+        aria-label="Open menu"
+      >
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- Mobile Nav -->
+  <div id="mobile-menu" class="hidden lg:hidden border-t border-gray-100 bg-white">
+    <div class="max-w-7xl mx-auto px-4 py-3 grid grid-cols-2 gap-1">
+      {navLinks.map(link => (
+        <a
+          href={link.href}
+          class={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${
+            currentPath === link.href
+              ? 'bg-blue-50 text-blue-600'
+              : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
+          }`}
+        >
+          {link.label}
+        </a>
+      ))}
+    </div>
+  </div>
+</header>
+
+<script>
+  const btn = document.getElementById('mobile-menu-btn');
+  const menu = document.getElementById('mobile-menu');
+  btn?.addEventListener('click', () => {
+    menu?.classList.toggle('hidden');
+  });
+</script>

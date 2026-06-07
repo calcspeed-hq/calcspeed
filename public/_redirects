@@ -1,0 +1,10 @@
+# Cloudflare Pages redirects
+# Trailing slash normalization is handled by Astro's static output
+/mortgage /mortgage-calculator 301
+/bmi /bmi-calculator 301
+/age /age-calculator 301
+/salary /salary-calculator 301
+/calories /calorie-calculator 301
+/percentage /percentage-calculator 301
+/time /time-calculator 301
+/grade /grade-calculator 301

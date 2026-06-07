@@ -1,0 +1,261 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import AdSlot from '../components/AdSlot.astro';
+
+const schema = {
+  '@context': 'https://schema.org',
+  '@type': 'WebApplication',
+  name: 'Percentage Calculator',
+  url: 'https://calcspeed.com/percentage-calculator',
+  description: 'Free percentage calculator with three modes: find a percentage of a number, what percent one number is of another, and calculate percentage change.',
+  applicationCategory: 'UtilityApplication',
+  operatingSystem: 'Web Browser',
+  offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
+};
+
+const faqs = [
+  {
+    q: 'How do I calculate what percentage X is of Y?',
+    a: 'To find what percentage X is of Y, divide X by Y and multiply by 100. The formula is: (X ÷ Y) × 100 = percentage. For example, if you scored 42 out of 50 on a test, your percentage score is (42 ÷ 50) × 100 = 84%. This is the most common percentage calculation used in grading, budgeting, and data analysis.',
+  },
+  {
+    q: 'What is the formula for percentage change?',
+    a: 'Percentage change measures how much a value increased or decreased relative to the original value. Formula: ((New Value − Old Value) ÷ Old Value) × 100. A positive result means an increase; a negative result means a decrease. For example, if a stock went from $50 to $65, the percentage change is ((65 − 50) ÷ 50) × 100 = 30% increase. If it went from $50 to $40, the change is −20%.',
+  },
+  {
+    q: 'How do I find a percentage of a number?',
+    a: 'To find X% of Y, multiply Y by X and divide by 100. Alternatively, convert the percentage to a decimal (divide by 100) and multiply: Y × (X/100). For example, 15% of $80 = 80 × 0.15 = $12. This calculation is used daily for tips, discounts, tax calculations, and more.',
+  },
+  {
+    q: 'What is the difference between percentage and percentage points?',
+    a: 'Percentage is a relative measure (a proportion of some base value), while a percentage point is an absolute difference between two percentage values. For example, if an interest rate rises from 3% to 5%, it increased by 2 percentage points, but the percentage increase in the rate itself is ((5−3)/3) × 100 = 66.7%. This distinction is important in finance, polling data, and statistics. Confusing the two is a common error in media reporting.',
+  },
+  {
+    q: 'How do I calculate a discount percentage?',
+    a: 'To find the discount percentage, subtract the sale price from the original price, divide by the original price, then multiply by 100. Formula: ((Original Price − Sale Price) ÷ Original Price) × 100. For example, if a $120 item is on sale for $90: ((120 − 90) ÷ 120) × 100 = 25% discount. To find the sale price given a discount: Sale Price = Original Price × (1 − Discount%/100).',
+  },
+  {
+    q: 'How do I calculate a tip percentage?',
+    a: 'To calculate a tip, multiply the bill amount by the tip percentage divided by 100. For a 20% tip on a $45 bill: $45 × 0.20 = $9 tip, making the total $54. A simple mental math trick for 20%: move the decimal left one place to get 10% ($4.50), then double it for 20% ($9.00). For 15%: take 10% ($4.50) and add half of that ($2.25) to get $6.75.',
+  },
+  {
+    q: 'What is a percentage increase calculator?',
+    a: 'A percentage increase calculator computes how much a value has grown as a percentage of its starting value. This is the same as the percentage change formula when the new value is larger than the old value. It\'s used in business to measure revenue growth, in science to measure experimental results, and in personal finance to track investment returns or salary raises.',
+  },
+  {
+    q: 'How do I reverse-calculate a percentage (find the original value)?',
+    a: 'If you know the final value and the percentage applied, you can find the original value by dividing the final value by (1 + percentage/100) for an increase, or (1 − percentage/100) for a decrease. For example, if a price after a 25% increase is $125: original = $125 ÷ 1.25 = $100. If a $90 price represents a 10% discount: original = $90 ÷ 0.90 = $100.',
+  },
+];
+---
+
+<Layout
+  title="Percentage Calculator - Free Online % Calculator | CalcSpeed"
+  description="Three-mode percentage calculator: find what X% of Y is, calculate what percent X is of Y, or find the percentage change between two numbers. Free and instant."
+  schema={schema}
+>
+  <Header />
+
+  <main class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+    <div class="mb-8">
+      <h1 class="text-3xl sm:text-4xl font-bold text-gray-900 mb-2">Percentage Calculator</h1>
+      <p class="text-gray-500">Three calculation modes — choose the one that fits your question.</p>
+    </div>
+
+    <AdSlot slot={1} />
+
+    <!-- Tab switcher -->
+    <div class="flex border border-gray-200 rounded-xl overflow-hidden mb-6 bg-gray-50">
+      <button data-tab="0" class="tab-btn flex-1 py-3 px-4 text-sm font-medium bg-blue-600 text-white transition-colors">
+        X% of Y
+      </button>
+      <button data-tab="1" class="tab-btn flex-1 py-3 px-4 text-sm font-medium text-gray-600 hover:bg-gray-100 transition-colors">
+        X is what % of Y
+      </button>
+      <button data-tab="2" class="tab-btn flex-1 py-3 px-4 text-sm font-medium text-gray-600 hover:bg-gray-100 transition-colors">
+        % Change
+      </button>
+    </div>
+
+    <!-- Mode 0: What is X% of Y -->
+    <div id="tab-0" class="bg-white border border-gray-200 rounded-2xl shadow-sm p-6 sm:p-8">
+      <h2 class="font-semibold text-gray-900 mb-1">What is X% of Y?</h2>
+      <p class="text-sm text-gray-500 mb-6">Find a percentage of any number. Great for tips, discounts, and tax calculations.</p>
+      <div class="flex flex-wrap items-center gap-3 mb-6">
+        <span class="text-gray-600 text-sm">What is</span>
+        <div class="relative w-28">
+          <input id="m0-pct" type="number" value="15" class="w-full pl-3 pr-7 py-2.5 border border-gray-200 rounded-lg font-mono text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500" />
+          <span class="absolute inset-y-0 right-2 flex items-center text-gray-400 font-mono text-sm">%</span>
+        </div>
+        <span class="text-gray-600 text-sm">of</span>
+        <div class="relative w-32">
+          <input id="m0-num" type="number" value="200" class="w-full pl-3 pr-3 py-2.5 border border-gray-200 rounded-lg font-mono text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500" />
+        </div>
+        <span class="text-gray-600 text-sm">?</span>
+      </div>
+      <div class="bg-blue-50 border border-blue-100 rounded-xl p-5">
+        <div class="text-sm text-blue-600 mb-1">Answer</div>
+        <div id="m0-result" class="text-4xl font-bold font-mono text-blue-700">30</div>
+        <div id="m0-formula" class="text-sm text-gray-500 mt-2">15% × 200 = 30</div>
+      </div>
+    </div>
+
+    <!-- Mode 1: X is what % of Y -->
+    <div id="tab-1" class="hidden bg-white border border-gray-200 rounded-2xl shadow-sm p-6 sm:p-8">
+      <h2 class="font-semibold text-gray-900 mb-1">X is what percent of Y?</h2>
+      <p class="text-sm text-gray-500 mb-6">Find the percentage one number represents of another. Useful for test scores, progress tracking.</p>
+      <div class="flex flex-wrap items-center gap-3 mb-6">
+        <div class="relative w-32">
+          <input id="m1-x" type="number" value="45" class="w-full pl-3 pr-3 py-2.5 border border-gray-200 rounded-lg font-mono text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500" />
+        </div>
+        <span class="text-gray-600 text-sm">is what % of</span>
+        <div class="relative w-32">
+          <input id="m1-y" type="number" value="60" class="w-full pl-3 pr-3 py-2.5 border border-gray-200 rounded-lg font-mono text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500" />
+        </div>
+        <span class="text-gray-600 text-sm">?</span>
+      </div>
+      <div class="bg-blue-50 border border-blue-100 rounded-xl p-5">
+        <div class="text-sm text-blue-600 mb-1">Answer</div>
+        <div id="m1-result" class="text-4xl font-bold font-mono text-blue-700">75%</div>
+        <div id="m1-formula" class="text-sm text-gray-500 mt-2">45 ÷ 60 × 100 = 75%</div>
+      </div>
+    </div>
+
+    <!-- Mode 2: Percentage change -->
+    <div id="tab-2" class="hidden bg-white border border-gray-200 rounded-2xl shadow-sm p-6 sm:p-8">
+      <h2 class="font-semibold text-gray-900 mb-1">Percentage change from X to Y</h2>
+      <p class="text-sm text-gray-500 mb-6">Calculate how much a value increased or decreased. Used for price changes, growth rates, salary increases.</p>
+      <div class="grid sm:grid-cols-2 gap-4 mb-6">
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">From (Original Value)</label>
+          <input id="m2-from" type="number" value="80"
+            class="w-full px-4 py-2.5 border border-gray-200 rounded-lg font-mono text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">To (New Value)</label>
+          <input id="m2-to" type="number" value="100"
+            class="w-full px-4 py-2.5 border border-gray-200 rounded-lg font-mono text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
+        </div>
+      </div>
+      <div id="m2-result-box" class="bg-blue-50 border border-blue-100 rounded-xl p-5">
+        <div class="text-sm text-blue-600 mb-1">Percentage Change</div>
+        <div id="m2-result" class="text-4xl font-bold font-mono text-blue-700">+25%</div>
+        <div id="m2-label" class="text-sm text-green-600 font-medium mt-1">Increase</div>
+        <div id="m2-formula" class="text-sm text-gray-500 mt-2">(100 − 80) ÷ 80 × 100 = +25%</div>
+      </div>
+    </div>
+
+    <AdSlot slot={2} />
+
+    <section class="mt-12">
+      <h2 class="text-2xl font-bold text-gray-900 mb-6">Frequently Asked Questions</h2>
+      <div class="space-y-4">
+        {faqs.map(faq => (
+          <details class="bg-white border border-gray-200 rounded-xl overflow-hidden group">
+            <summary class="flex items-center justify-between p-5 cursor-pointer list-none font-medium text-gray-900 hover:text-blue-600">
+              {faq.q}
+              <svg class="w-5 h-5 text-gray-400 flex-shrink-0 ml-4 group-open:rotate-180 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+              </svg>
+            </summary>
+            <div class="px-5 pb-5 text-gray-600 text-sm leading-relaxed border-t border-gray-100 pt-4">
+              {faq.a}
+            </div>
+          </details>
+        ))}
+      </div>
+    </section>
+
+    <AdSlot slot={3} />
+
+    <section class="mt-12">
+      <h2 class="text-xl font-bold text-gray-900 mb-3">How to Use This Percentage Calculator</h2>
+      <p class="text-gray-600 text-[15px] leading-relaxed mb-4">
+        Switch between the three tabs to select the type of percentage problem you need to solve. The "X% of Y" tab finds an amount—useful for calculating tips on restaurant bills, figuring out sales tax, or determining how much a 20% discount saves you. The "X is what % of Y" tab works backwards, telling you the proportion—perfect for grade calculations or measuring what fraction of a budget something represents.
+      </p>
+      <p class="text-gray-600 text-[15px] leading-relaxed">
+        The "% Change" tab measures growth or decline between two values. This is the calculation behind stock price changes, year-over-year revenue comparisons, and salary increase negotiations. A positive result means the value went up; a negative result means it went down. All three modes update instantly as you type, so you can experiment with different numbers to see how percentages work in real-time.
+      </p>
+    </section>
+  </main>
+
+  <Footer />
+</Layout>
+
+<script>
+  let activeTab = 0;
+
+  function calcM0() {
+    const pct = parseFloat((document.getElementById('m0-pct') as HTMLInputElement).value) || 0;
+    const num = parseFloat((document.getElementById('m0-num') as HTMLInputElement).value) || 0;
+    const result = (pct / 100) * num;
+    (document.getElementById('m0-result') as HTMLElement).textContent = parseFloat(result.toFixed(6)).toLocaleString('en-US');
+    (document.getElementById('m0-formula') as HTMLElement).textContent = `${pct}% × ${num} = ${parseFloat(result.toFixed(4)).toLocaleString('en-US')}`;
+  }
+
+  function calcM1() {
+    const x = parseFloat((document.getElementById('m1-x') as HTMLInputElement).value) || 0;
+    const y = parseFloat((document.getElementById('m1-y') as HTMLInputElement).value) || 1;
+    const result = (x / y) * 100;
+    (document.getElementById('m1-result') as HTMLElement).textContent = parseFloat(result.toFixed(4)).toLocaleString('en-US') + '%';
+    (document.getElementById('m1-formula') as HTMLElement).textContent = `${x} ÷ ${y} × 100 = ${parseFloat(result.toFixed(4))}%`;
+  }
+
+  function calcM2() {
+    const from = parseFloat((document.getElementById('m2-from') as HTMLInputElement).value) || 0;
+    const to = parseFloat((document.getElementById('m2-to') as HTMLInputElement).value) || 0;
+    if (from === 0) return;
+    const change = ((to - from) / Math.abs(from)) * 100;
+    const sign = change >= 0 ? '+' : '';
+    (document.getElementById('m2-result') as HTMLElement).textContent = sign + parseFloat(change.toFixed(4)).toLocaleString('en-US') + '%';
+    const label = document.getElementById('m2-label') as HTMLElement;
+    const box = document.getElementById('m2-result-box') as HTMLElement;
+    if (change > 0) {
+      label.textContent = 'Increase';
+      label.className = 'text-sm text-green-600 font-medium mt-1';
+      box.className = 'bg-green-50 border border-green-100 rounded-xl p-5';
+    } else if (change < 0) {
+      label.textContent = 'Decrease';
+      label.className = 'text-sm text-red-600 font-medium mt-1';
+      box.className = 'bg-red-50 border border-red-100 rounded-xl p-5';
+    } else {
+      label.textContent = 'No Change';
+      label.className = 'text-sm text-gray-600 font-medium mt-1';
+      box.className = 'bg-blue-50 border border-blue-100 rounded-xl p-5';
+    }
+    (document.getElementById('m2-formula') as HTMLElement).textContent =
+      `(${to} − ${from}) ÷ ${Math.abs(from)} × 100 = ${sign}${parseFloat(change.toFixed(4))}%`;
+  }
+
+  function switchTab(n: number) {
+    activeTab = n;
+    document.querySelectorAll('.tab-btn').forEach((btn, i) => {
+      if (i === n) {
+        btn.classList.add('bg-blue-600', 'text-white');
+        btn.classList.remove('text-gray-600', 'hover:bg-gray-100');
+      } else {
+        btn.classList.remove('bg-blue-600', 'text-white');
+        btn.classList.add('text-gray-600', 'hover:bg-gray-100');
+      }
+    });
+    [0, 1, 2].forEach(i => {
+      const el = document.getElementById(`tab-${i}`);
+      if (i === n) el?.classList.remove('hidden');
+      else el?.classList.add('hidden');
+    });
+  }
+
+  document.querySelectorAll('.tab-btn').forEach((btn, i) => {
+    btn.addEventListener('click', () => switchTab(i));
+  });
+
+  ['m0-pct', 'm0-num'].forEach(id => document.getElementById(id)?.addEventListener('input', calcM0));
+  ['m1-x', 'm1-y'].forEach(id => document.getElementById(id)?.addEventListener('input', calcM1));
+  ['m2-from', 'm2-to'].forEach(id => document.getElementById(id)?.addEventListener('input', calcM2));
+
+  calcM0(); calcM1(); calcM2();
+</script>

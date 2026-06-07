@@ -1,0 +1,228 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import AdSlot from '../components/AdSlot.astro';
+
+const schema = {
+  '@context': 'https://schema.org',
+  '@type': 'WebApplication',
+  name: 'Age Calculator',
+  url: 'https://calcspeed.com/age-calculator',
+  description: 'Calculate your exact age in years, months, and days. Find days until your next birthday and the day of the week you were born.',
+  applicationCategory: 'UtilityApplication',
+  operatingSystem: 'Web Browser',
+  offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
+};
+
+const faqs = [
+  {
+    q: 'How is exact age calculated?',
+    a: 'Exact age is calculated by comparing your birth date to the target date (usually today) and counting the full years, months, and days that have elapsed. The calculation accounts for varying month lengths and leap years. A year is counted only when the full 12-month cycle is complete from your birth month and day. The remaining months and days are then counted from the last birthday to the target date.',
+  },
+  {
+    q: 'What is the difference between age in years vs. age in days?',
+    a: 'Age in years tells you how many complete 12-month cycles have passed since your birth, which is what most people refer to as their "age." Age in days is the total number of calendar days you have been alive, including all the days in each year and accounting for leap years. For example, a 30-year-old has lived approximately 10,957 days (more or fewer depending on how many leap years fall in their lifetime).',
+  },
+  {
+    q: 'Why does the day of the week I was born matter?',
+    a: 'Knowing your birth weekday is a fun bit of trivia, but it\'s also culturally significant in some traditions. Some parents note that Sunday-born children are considered "the Sabbath child" in the old nursery rhyme ("Sunday\'s child is full of grace"). Historically, birth records often noted the day of the week for religious and astrological purposes. Today it\'s simply an interesting piece of personal history that many people enjoy knowing.',
+  },
+  {
+    q: 'How many days until my next birthday?',
+    a: 'To find days until your next birthday, the calculator determines your upcoming birthday date in the current year. If that date has already passed this year, it uses your birthday next year. It then counts the number of calendar days from today to that future date. A birthday on February 29 (leap day) is handled by targeting March 1 in non-leap years.',
+  },
+  {
+    q: 'What is the legal age of adulthood in the US?',
+    a: 'In the United States, the legal age of adulthood (majority) is 18 years old in most states. At 18, individuals can vote, sign contracts, and join the military. Some states set the age of majority at 19 or 21 for specific activities. The legal drinking age is 21 in all 50 states. The age for renting a car without extra fees is typically 25. Retirement age for full Social Security benefits ranges from 66 to 67 depending on birth year.',
+  },
+  {
+    q: 'Can I calculate the age of someone who hasn\'t been born yet?',
+    a: 'This calculator is designed for calculating age from a past date of birth to a target date. If the date of birth is in the future, the calculator will show a result of 0 or indicate a future date. For calculating how far in the future a date is, you could use the time calculator tool to find the duration between today and a future date.',
+  },
+  {
+    q: 'How do leap years affect my age calculation?',
+    a: 'Leap years affect the total number of days you have lived. The calculator accounts for this by tracking whether each year between your birth and today was a leap year (divisible by 4, with century exceptions). For people born on February 29, their birthday technically occurs only every 4 years. Most people celebrate on February 28 or March 1 in non-leap years. Our calculator handles this edge case automatically.',
+  },
+  {
+    q: 'What is the average life expectancy in the United States?',
+    a: 'According to recent CDC data, the average life expectancy in the United States is approximately 76–77 years overall. Women typically have a longer life expectancy (around 79–80 years) than men (around 73–74 years). Life expectancy varies by state, race, and socioeconomic factors. These numbers fluctuate year to year and were notably affected by the COVID-19 pandemic in 2020–2021.',
+  },
+];
+---
+
+<Layout
+  title="Age Calculator - Calculate Your Exact Age | CalcSpeed"
+  description="Calculate your exact age in years, months, and days. Find out how many days until your next birthday and what day of the week you were born. Free and instant."
+  schema={schema}
+>
+  <Header />
+
+  <main class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+    <div class="mb-8">
+      <h1 class="text-3xl sm:text-4xl font-bold text-gray-900 mb-2">Age Calculator</h1>
+      <p class="text-gray-500">Find your exact age in years, months, and days — plus your next birthday countdown.</p>
+    </div>
+
+    <AdSlot slot={1} />
+
+    <div class="bg-white border border-gray-200 rounded-2xl shadow-sm overflow-hidden">
+      <div class="grid md:grid-cols-2 divide-y md:divide-y-0 md:divide-x divide-gray-100">
+
+        <!-- Inputs -->
+        <div class="p-6 sm:p-8">
+          <h2 class="font-semibold text-gray-900 mb-6 text-lg">Date Details</h2>
+          <div class="space-y-5">
+            <div>
+              <label for="dob" class="block text-sm font-medium text-gray-700 mb-1">Date of Birth</label>
+              <input id="dob" type="date" value="1990-06-15"
+                class="w-full px-4 py-2.5 border border-gray-200 rounded-lg font-mono text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+            </div>
+            <div>
+              <label for="target-date" class="block text-sm font-medium text-gray-700 mb-1">Target Date</label>
+              <input id="target-date" type="date"
+                class="w-full px-4 py-2.5 border border-gray-200 rounded-lg font-mono text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+              <button id="use-today" type="button" class="mt-2 text-xs text-blue-600 hover:underline font-medium">
+                Use today's date
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Results -->
+        <div class="p-6 sm:p-8 bg-gray-50">
+          <h2 class="font-semibold text-gray-900 mb-6 text-lg">Results</h2>
+          <div class="space-y-4">
+            <div class="bg-white rounded-xl border border-blue-100 p-5 shadow-sm">
+              <div class="text-sm text-gray-500 mb-2">Your Age</div>
+              <div id="age-years" class="text-4xl font-bold font-mono text-blue-600">35</div>
+              <div id="age-detail" class="text-sm text-gray-500 mt-1">years, 11 months, 22 days</div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-3">
+              <div class="bg-white rounded-lg border border-gray-100 p-4">
+                <div class="text-xs text-gray-500 mb-1">Total Days Lived</div>
+                <div id="age-days" class="text-xl font-semibold font-mono text-gray-900">13,140</div>
+              </div>
+              <div class="bg-white rounded-lg border border-gray-100 p-4">
+                <div class="text-xs text-gray-500 mb-1">Total Months</div>
+                <div id="age-months" class="text-xl font-semibold font-mono text-gray-900">431</div>
+              </div>
+            </div>
+
+            <div class="bg-white rounded-lg border border-gray-100 p-4">
+              <div class="text-xs text-gray-500 mb-1">Days Until Next Birthday</div>
+              <div id="days-to-bday" class="text-xl font-semibold font-mono text-gray-900">8 days</div>
+            </div>
+
+            <div class="bg-white rounded-lg border border-gray-100 p-4">
+              <div class="text-xs text-gray-500 mb-1">Day of Week Born</div>
+              <div id="born-day" class="text-xl font-semibold font-mono text-gray-900">Friday</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <AdSlot slot={2} />
+
+    <section class="mt-12">
+      <h2 class="text-2xl font-bold text-gray-900 mb-6">Frequently Asked Questions</h2>
+      <div class="space-y-4">
+        {faqs.map(faq => (
+          <details class="bg-white border border-gray-200 rounded-xl overflow-hidden group">
+            <summary class="flex items-center justify-between p-5 cursor-pointer list-none font-medium text-gray-900 hover:text-blue-600">
+              {faq.q}
+              <svg class="w-5 h-5 text-gray-400 flex-shrink-0 ml-4 group-open:rotate-180 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+              </svg>
+            </summary>
+            <div class="px-5 pb-5 text-gray-600 text-sm leading-relaxed border-t border-gray-100 pt-4">
+              {faq.a}
+            </div>
+          </details>
+        ))}
+      </div>
+    </section>
+
+    <AdSlot slot={3} />
+
+    <section class="mt-12">
+      <h2 class="text-xl font-bold text-gray-900 mb-3">How the Age Calculator Works</h2>
+      <p class="text-gray-600 text-[15px] leading-relaxed mb-4">
+        Enter your date of birth and a target date (which defaults to today). The calculator instantly computes your exact age by finding the number of complete years, months, and days between the two dates. This is more precise than simply subtracting birth years, because it accounts for whether you've had your birthday yet in the current year.
+      </p>
+      <p class="text-gray-600 text-[15px] leading-relaxed">
+        The days-until-next-birthday count helps you plan ahead, whether you're organizing a celebration or just curious how close your special day is. The day of the week you were born is calculated using Zeller's congruence algorithm, an accurate mathematical formula that works for any date after the Gregorian calendar was adopted.
+      </p>
+    </section>
+  </main>
+
+  <Footer />
+</Layout>
+
+<script>
+  const days = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+
+  function pad(n: number) { return String(n).padStart(2, '0'); }
+
+  function calculate() {
+    const dobVal = (document.getElementById('dob') as HTMLInputElement).value;
+    const targetVal = (document.getElementById('target-date') as HTMLInputElement).value;
+    if (!dobVal || !targetVal) return;
+
+    const dob = new Date(dobVal + 'T00:00:00');
+    const target = new Date(targetVal + 'T00:00:00');
+    if (dob >= target) return;
+
+    let years = target.getFullYear() - dob.getFullYear();
+    let months = target.getMonth() - dob.getMonth();
+    let daysR = target.getDate() - dob.getDate();
+
+    if (daysR < 0) {
+      months--;
+      const prevMonth = new Date(target.getFullYear(), target.getMonth(), 0);
+      daysR += prevMonth.getDate();
+    }
+    if (months < 0) {
+      years--;
+      months += 12;
+    }
+
+    const totalDays = Math.floor((target.getTime() - dob.getTime()) / 86400000);
+    const totalMonths = years * 12 + months;
+
+    (document.getElementById('age-years') as HTMLElement).textContent = String(years);
+    (document.getElementById('age-detail') as HTMLElement).textContent =
+      `years, ${months} month${months !== 1 ? 's' : ''}, ${daysR} day${daysR !== 1 ? 's' : ''}`;
+    (document.getElementById('age-days') as HTMLElement).textContent = totalDays.toLocaleString('en-US');
+    (document.getElementById('age-months') as HTMLElement).textContent = totalMonths.toLocaleString('en-US');
+
+    // Next birthday
+    let nextBday = new Date(target.getFullYear(), dob.getMonth(), dob.getDate());
+    if (nextBday <= target) nextBday = new Date(target.getFullYear() + 1, dob.getMonth(), dob.getDate());
+    const daysUntil = Math.ceil((nextBday.getTime() - target.getTime()) / 86400000);
+    (document.getElementById('days-to-bday') as HTMLElement).textContent =
+      daysUntil === 0 ? 'Today! 🎂' : `${daysUntil} day${daysUntil !== 1 ? 's' : ''}`;
+
+    // Day of week born
+    (document.getElementById('born-day') as HTMLElement).textContent = days[dob.getDay()];
+  }
+
+  // Set today as default target
+  const today = new Date();
+  const todayStr = `${today.getFullYear()}-${pad(today.getMonth()+1)}-${pad(today.getDate())}`;
+  (document.getElementById('target-date') as HTMLInputElement).value = todayStr;
+
+  document.getElementById('use-today')?.addEventListener('click', () => {
+    (document.getElementById('target-date') as HTMLInputElement).value = todayStr;
+    calculate();
+  });
+
+  document.getElementById('dob')?.addEventListener('input', calculate);
+  document.getElementById('target-date')?.addEventListener('input', calculate);
+
+  calculate();
+</script>

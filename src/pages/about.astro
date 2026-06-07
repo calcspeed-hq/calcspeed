@@ -1,0 +1,59 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+---
+
+<Layout
+  title="About CalcSpeed - Fast, Free Online Calculators"
+  description="CalcSpeed is a free online calculator suite built for US users. Learn about our mission to provide fast, accurate, privacy-first tools for financial, health, and everyday calculations."
+>
+  <Header />
+
+  <main class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+    <h1 class="text-3xl sm:text-4xl font-bold text-gray-900 mb-6">About CalcSpeed</h1>
+
+    <div class="prose prose-gray max-w-none text-gray-600 leading-relaxed space-y-5 text-[15px]">
+      <p>
+        CalcSpeed was built with one mission: make everyday calculations fast, free, and accessible to everyone in the United States. Whether you're planning a home purchase, tracking your fitness progress, understanding your paycheck, or checking a grade, our tools give you instant, accurate answers without the friction of sign-ups, paywalls, or invasive data collection.
+      </p>
+
+      <p>
+        Every calculator on CalcSpeed runs entirely in your browser. Nothing you enter is ever sent to our servers, logged, or stored. Your financial figures, health metrics, and personal data stay completely private—because we believe a useful tool should never come at the cost of your privacy.
+      </p>
+
+      <p>
+        We've built eight purpose-designed calculators covering the scenarios Americans reach for a calculator most often: mortgage payment estimation, BMI calculation, exact age computation, salary and take-home pay estimation, daily calorie needs, percentage math, time zone conversion, and academic grade tracking. Each tool is optimized for US conventions—dollar amounts, US measurement units, all 50 state tax rates, and US time zones.
+      </p>
+
+      <p>
+        CalcSpeed is designed to load in under a second and work perfectly on any device—phone, tablet, or desktop. We use no heavy frameworks or bloated libraries. Just clean, fast, purpose-built code that puts your answer front and center.
+      </p>
+
+      <p>
+        We're committed to keeping CalcSpeed completely free. If you find a bug, have a suggestion for a new calculator, or just want to say hello, please reach out through our <a href="/contact" class="text-blue-600 hover:underline">contact page</a>.
+      </p>
+    </div>
+
+    <div class="mt-12 grid grid-cols-2 sm:grid-cols-4 gap-4">
+      <div class="bg-blue-50 rounded-xl p-5 text-center">
+        <div class="text-2xl font-bold font-mono text-blue-600">8</div>
+        <div class="text-xs text-gray-500 mt-1">Calculators</div>
+      </div>
+      <div class="bg-blue-50 rounded-xl p-5 text-center">
+        <div class="text-2xl font-bold font-mono text-blue-600">0</div>
+        <div class="text-xs text-gray-500 mt-1">Data Collected</div>
+      </div>
+      <div class="bg-blue-50 rounded-xl p-5 text-center">
+        <div class="text-2xl font-bold font-mono text-blue-600">50</div>
+        <div class="text-xs text-gray-500 mt-1">US States</div>
+      </div>
+      <div class="bg-blue-50 rounded-xl p-5 text-center">
+        <div class="text-2xl font-bold font-mono text-blue-600">Free</div>
+        <div class="text-xs text-gray-500 mt-1">Always</div>
+      </div>
+    </div>
+  </main>
+
+  <Footer />
+</Layout>
