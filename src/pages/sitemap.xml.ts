@@ -10,6 +10,7 @@ const pages = [
   { url: '/percentage-calculator', priority: '0.9', changefreq: 'monthly' },
   { url: '/time-calculator', priority: '0.9', changefreq: 'monthly' },
   { url: '/grade-calculator', priority: '0.9', changefreq: 'monthly' },
+  { url: '/tip-calculator/', priority: '0.9', changefreq: 'monthly' },
   { url: '/about', priority: '0.5', changefreq: 'yearly' },
   { url: '/contact', priority: '0.5', changefreq: 'yearly' },
   { url: '/privacy', priority: '0.3', changefreq: 'yearly' },

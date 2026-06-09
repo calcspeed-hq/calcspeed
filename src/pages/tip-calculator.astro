@@ -1,0 +1,283 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import AdSlot from '../components/AdSlot.astro';
+
+const schema = {
+  '@context': 'https://schema.org',
+  '@type': 'WebApplication',
+  name: 'Tip Calculator',
+  url: 'https://calcspeed.com/tip-calculator/',
+  description: 'Free tip calculator. Enter your bill, choose a tip percentage, and split between any number of people. Instant results for dining, delivery, and more.',
+  applicationCategory: 'UtilityApplication',
+  operatingSystem: 'Web Browser',
+  offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
+};
+
+const faqs = [
+  {
+    q: 'What is the standard tip percentage in the US?',
+    a: 'The standard tip at sit-down restaurants in the United States is 15–20%, with 20% increasingly the norm in major cities. For exceptional service, 25% or more is common. At counter-service or fast-casual restaurants, tipping is appreciated but not expected—10–15% is generous. For food delivery, $3–$5 per order or 15–20% of the bill is standard, and for rideshares like Uber and Lyft, 15–20% is typical. These norms have shifted upward over time partly due to the rise of digital payment prompts.',
+  },
+  {
+    q: 'Should I tip on the pre-tax or post-tax amount?',
+    a: 'There is no strict rule, but most etiquette experts recommend tipping on the pre-tax subtotal since the server did not provide the government\'s portion of your bill. In practice, the difference is small—on a $50 meal with 8% tax, tipping 20% pre-tax is $10.00 versus $10.80 post-tax. Many diners find it easier to tip on the total rather than subtracting tax first. Either approach is perfectly acceptable; the server will appreciate any thoughtful tip.',
+  },
+  {
+    q: 'How do I split a bill evenly between multiple people?',
+    a: 'To split a bill evenly, add the tip to the total bill first, then divide by the number of people. For example, if your bill is $120 and you tip 20%, the tip is $24, making the total $144. Split among 4 people, each person owes $36. This calculator does that math automatically: enter your bill, select a tip percentage, set the number of people, and it shows each person\'s share instantly. For uneven splits (one person had a more expensive dish), it\'s easiest to itemize each person\'s share and apply the tip percentage to their individual subtotal.',
+  },
+  {
+    q: 'Should I tip on takeout or delivery orders?',
+    a: 'Tipping on takeout is optional but courteous—10–15% acknowledges the staff who prepared and packaged your food. For delivery orders, tipping is strongly encouraged since delivery drivers often rely on tips as a significant part of their income. The recommended range for delivery is 15–20% of the order total, with a minimum of $3–$5 for smaller orders. Third-party delivery apps (DoorDash, Uber Eats, Grubhub) typically prompt for a tip before delivery; this goes to the driver, not the restaurant, so consider tipping both if the service is excellent.',
+  },
+  {
+    q: 'How much should I tip hotel staff, hairdressers, and other service workers?',
+    a: 'Tipping norms vary by service: hotel housekeeping, $2–$5 per night (left daily since staff may rotate); bellhops, $1–$2 per bag; hotel concierge for significant help, $5–$20. For hairdressers and stylists, 15–20% of the service cost is standard. Barbers, $2–$5 or 15–20%. Tattoo artists, 15–20% if you are happy with the work. Movers, $20–$50 per mover for a full-day job. Spa services (massages, facials), 15–20%. When in doubt, 15–20% is a safe default for any personal service.',
+  },
+  {
+    q: 'Is tipping mandatory in the US, and what happens if I don\'t tip?',
+    a: 'Tipping is not legally required in the US—it is a voluntary gratuity. However, for tipped workers like restaurant servers, federal law allows employers to pay a lower base wage (as little as $2.13/hour federally) on the assumption that tips will bring their total compensation up to at least minimum wage. In practice, skipping a tip in a full-service restaurant means the server may earn very little for their work. Some restaurants have moved to a no-tipping model with higher menu prices, but this is still uncommon. In other countries—Japan, South Korea, Australia—tipping can even be considered rude, so it\'s worth researching local customs when traveling abroad.',
+  },
+];
+---
+
+<Layout
+  title="Tip Calculator - Calculate Tip and Split the Bill | CalcSpeed"
+  description="Free tip calculator. Enter your bill, choose a tip percentage, and split between any number of people. Instant results for dining, delivery, and more."
+  canonical="https://calcspeed.com/tip-calculator/"
+  schema={schema}
+>
+  <Header />
+
+  <main class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+    <div class="mb-8">
+      <h1 class="text-3xl sm:text-4xl font-bold text-gray-900 mb-2">Tip Calculator</h1>
+      <p class="text-gray-500">Enter your bill, pick a tip percentage, and split between any number of people.</p>
+    </div>
+
+    <AdSlot slot={1} />
+
+    <div class="bg-white border border-gray-200 rounded-2xl shadow-sm overflow-hidden">
+      <div class="grid md:grid-cols-2 divide-y md:divide-y-0 md:divide-x divide-gray-100">
+
+        <!-- Inputs -->
+        <div class="p-6 sm:p-8">
+          <h2 class="font-semibold text-gray-900 text-lg mb-6">Bill Details</h2>
+
+          <!-- Bill Amount -->
+          <div class="mb-5">
+            <label for="bill-amount" class="block text-sm font-medium text-gray-700 mb-1">Bill Amount</label>
+            <div class="relative">
+              <span class="absolute inset-y-0 left-3 flex items-center text-gray-400 text-sm font-mono">$</span>
+              <input
+                id="bill-amount"
+                type="number"
+                value="50"
+                min="0"
+                step="0.01"
+                placeholder="0.00"
+                class="w-full pl-7 pr-4 py-2.5 border border-gray-200 rounded-lg font-mono text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+            </div>
+          </div>
+
+          <!-- Tip Percentage -->
+          <div class="mb-5">
+            <label class="block text-sm font-medium text-gray-700 mb-2">Tip Percentage</label>
+            <div class="grid grid-cols-3 gap-2 mb-3">
+              {['10', '15', '18', '20', '25'].map(pct => (
+                <button
+                  data-tip={pct}
+                  type="button"
+                  class={`tip-btn py-2 rounded-lg border text-sm font-medium transition-colors ${pct === '18' ? 'bg-blue-600 text-white border-blue-600' : 'bg-white text-gray-700 border-gray-200 hover:border-blue-400 hover:text-blue-600'}`}
+                >
+                  {pct}%
+                </button>
+              ))}
+              <button
+                data-tip="custom"
+                type="button"
+                class="tip-btn py-2 rounded-lg border text-sm font-medium bg-white text-gray-700 border-gray-200 hover:border-blue-400 hover:text-blue-600 transition-colors"
+              >
+                Custom
+              </button>
+            </div>
+            <!-- Custom tip input -->
+            <div id="custom-tip-wrapper" class="hidden">
+              <div class="relative">
+                <input
+                  id="custom-tip"
+                  type="number"
+                  value=""
+                  min="0"
+                  max="100"
+                  step="0.5"
+                  placeholder="Enter %"
+                  class="w-full pl-4 pr-8 py-2.5 border border-blue-300 rounded-lg font-mono text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+                <span class="absolute inset-y-0 right-3 flex items-center text-gray-400 text-sm">%</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Number of People -->
+          <div>
+            <label for="num-people" class="block text-sm font-medium text-gray-700 mb-1">Split Between</label>
+            <div class="relative">
+              <input
+                id="num-people"
+                type="number"
+                value="1"
+                min="1"
+                max="100"
+                step="1"
+                class="w-full pl-4 pr-16 py-2.5 border border-gray-200 rounded-lg font-mono text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+              <span class="absolute inset-y-0 right-3 flex items-center text-gray-400 text-sm">people</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Results -->
+        <div class="p-6 sm:p-8 bg-gray-50">
+          <h2 class="font-semibold text-gray-900 mb-6 text-lg">Your Total</h2>
+
+          <div class="space-y-4">
+            <!-- Tip Amount -->
+            <div class="bg-white border border-gray-200 rounded-xl p-4">
+              <div class="text-sm text-gray-500 mb-1">Tip Amount</div>
+              <div id="result-tip" class="text-3xl font-bold font-mono text-blue-600">$9.00</div>
+              <div id="result-tip-pct" class="text-xs text-gray-400 mt-1">18% of $50.00</div>
+            </div>
+
+            <!-- Total Bill -->
+            <div class="bg-white border border-gray-200 rounded-xl p-4">
+              <div class="text-sm text-gray-500 mb-1">Total Bill</div>
+              <div id="result-total" class="text-3xl font-bold font-mono text-gray-900">$59.00</div>
+              <div class="text-xs text-gray-400 mt-1">Bill + tip</div>
+            </div>
+
+            <!-- Per Person -->
+            <div class="bg-blue-50 border border-blue-100 rounded-xl p-4">
+              <div class="text-sm text-blue-600 mb-1">Per Person</div>
+              <div id="result-per-person" class="text-4xl font-bold font-mono text-blue-700">$59.00</div>
+              <div id="result-split-note" class="text-xs text-blue-400 mt-1">1 person</div>
+            </div>
+          </div>
+
+          <!-- Summary line -->
+          <div id="result-summary" class="mt-4 text-xs text-gray-400 text-center">
+            $50.00 bill &times; 18% tip &divide; 1 person
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <AdSlot slot={2} />
+
+    <section class="mt-12">
+      <h2 class="text-2xl font-bold text-gray-900 mb-6">Frequently Asked Questions</h2>
+      <div class="space-y-4">
+        {faqs.map(faq => (
+          <details class="bg-white border border-gray-200 rounded-xl overflow-hidden group">
+            <summary class="flex items-center justify-between p-5 cursor-pointer list-none font-medium text-gray-900 hover:text-blue-600">
+              {faq.q}
+              <svg class="w-5 h-5 text-gray-400 flex-shrink-0 ml-4 group-open:rotate-180 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+              </svg>
+            </summary>
+            <div class="px-5 pb-5 text-gray-600 text-sm leading-relaxed border-t border-gray-100 pt-4">
+              {faq.a}
+            </div>
+          </details>
+        ))}
+      </div>
+    </section>
+
+    <AdSlot slot={3} />
+
+    <section class="mt-12">
+      <h2 class="text-xl font-bold text-gray-900 mb-3">About This Tip Calculator</h2>
+      <p class="text-gray-600 text-[15px] leading-relaxed mb-4">
+        This tip calculator handles everything from a simple solo dinner to large group splits. Enter your bill amount, choose a preset tip percentage (10%, 15%, 18%, 20%, or 25%) or type in a custom percentage, and specify how many people are splitting the check. The calculator instantly shows the tip amount, the total bill, and how much each person owes.
+      </p>
+      <p class="text-gray-600 text-[15px] leading-relaxed">
+        All calculations happen in your browser in real time—no form submission needed. The tip is calculated as: Tip = Bill × (Tip% ÷ 100). The per-person amount is: (Bill + Tip) ÷ Number of People. Results are rounded to the nearest cent.
+      </p>
+    </section>
+  </main>
+
+  <Footer />
+</Layout>
+
+<script>
+  let activeTipPct = 18;
+  let useCustom = false;
+
+  function fmt(n: number): string {
+    return '$' + n.toFixed(2);
+  }
+
+  function calculate() {
+    const bill = parseFloat((document.getElementById('bill-amount') as HTMLInputElement).value) || 0;
+    const people = Math.max(1, parseInt((document.getElementById('num-people') as HTMLInputElement).value) || 1);
+
+    let tipPct = activeTipPct;
+    if (useCustom) {
+      tipPct = parseFloat((document.getElementById('custom-tip') as HTMLInputElement).value) || 0;
+    }
+
+    const tip = bill * (tipPct / 100);
+    const total = bill + tip;
+    const perPerson = total / people;
+
+    (document.getElementById('result-tip') as HTMLElement).textContent = fmt(tip);
+    (document.getElementById('result-tip-pct') as HTMLElement).textContent = `${tipPct}% of ${fmt(bill)}`;
+    (document.getElementById('result-total') as HTMLElement).textContent = fmt(total);
+    (document.getElementById('result-per-person') as HTMLElement).textContent = fmt(perPerson);
+    (document.getElementById('result-split-note') as HTMLElement).textContent =
+      people === 1 ? '1 person' : `${people} people`;
+    (document.getElementById('result-summary') as HTMLElement).textContent =
+      `${fmt(bill)} bill × ${tipPct}% tip ÷ ${people} ${people === 1 ? 'person' : 'people'}`;
+  }
+
+  function setTipBtn(selected: string) {
+    document.querySelectorAll('.tip-btn').forEach(btn => {
+      const tip = (btn as HTMLElement).dataset.tip;
+      if (tip === selected) {
+        btn.classList.add('bg-blue-600', 'text-white', 'border-blue-600');
+        btn.classList.remove('bg-white', 'text-gray-700', 'border-gray-200', 'hover:border-blue-400', 'hover:text-blue-600');
+      } else {
+        btn.classList.remove('bg-blue-600', 'text-white', 'border-blue-600');
+        btn.classList.add('bg-white', 'text-gray-700', 'border-gray-200', 'hover:border-blue-400', 'hover:text-blue-600');
+      }
+    });
+  }
+
+  document.querySelectorAll('.tip-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const tip = (btn as HTMLElement).dataset.tip!;
+      const customWrapper = document.getElementById('custom-tip-wrapper')!;
+      if (tip === 'custom') {
+        useCustom = true;
+        customWrapper.classList.remove('hidden');
+        setTipBtn('custom');
+      } else {
+        useCustom = false;
+        activeTipPct = parseInt(tip);
+        customWrapper.classList.add('hidden');
+        setTipBtn(tip);
+      }
+      calculate();
+    });
+  });
+
+  document.getElementById('bill-amount')?.addEventListener('input', calculate);
+  document.getElementById('num-people')?.addEventListener('input', calculate);
+  document.getElementById('custom-tip')?.addEventListener('input', calculate);
+
+  calculate();
+</script>
