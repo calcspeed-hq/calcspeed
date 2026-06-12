@@ -1,0 +1,326 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import AdSlot from '../components/AdSlot.astro';
+
+const schema = {
+  '@context': 'https://schema.org',
+  '@type': 'WebApplication',
+  name: 'Loan Calculator',
+  url: 'https://calcspeed.com/loan-calculator/',
+  description: 'Free loan calculator. Calculate your monthly payment, total interest, and view a full amortization schedule for any loan amount, rate, and term.',
+  applicationCategory: 'FinanceApplication',
+  operatingSystem: 'Web Browser',
+  offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
+};
+
+const faqs = [
+  {
+    q: 'What is loan amortization?',
+    a: 'Loan amortization is the process of paying off a debt through a series of fixed, scheduled payments over time. Each payment covers the interest that has accrued on the outstanding balance plus a portion of the principal. Early in the loan, most of each payment is interest because the balance is high. As the balance decreases, the interest portion shrinks and more of each payment goes toward principal. An amortization schedule is the table showing this exact breakdown for every payment over the life of the loan.',
+  },
+  {
+    q: 'How is my monthly loan payment calculated?',
+    a: 'The monthly payment uses the standard amortization formula: M = P[r(1+r)^n] / [(1+r)^n – 1], where P is the principal (loan amount), r is the monthly interest rate (annual rate ÷ 12), and n is the total number of monthly payments (years × 12). This formula is designed so the loan is fully paid off by the last payment, with every payment exactly the same size throughout the term.',
+  },
+  {
+    q: 'How can I reduce the total interest I pay on a loan?',
+    a: 'There are several effective strategies: (1) Make extra principal payments — any amount above your required monthly payment directly reduces the balance, cutting future interest. (2) Choose a shorter loan term — a 3-year loan accrues far less interest than a 7-year loan at the same rate. (3) Shop for a lower interest rate or refinance if rates fall. (4) Make bi-weekly payments — you end up making 26 half-payments per year (equivalent to 13 full payments), which can shave months off the loan and save a meaningful amount in interest.',
+  },
+  {
+    q: 'What is the difference between a fixed-rate and a variable-rate loan?',
+    a: 'A fixed-rate loan has an interest rate that never changes — your monthly payment stays the same from first to last, making budgeting straightforward. A variable-rate loan has an interest rate that adjusts periodically based on a benchmark index such as the prime rate or SOFR. Variable rates often start lower, which can save money if rates stay low, but they carry the risk that rising rates will increase your payment. This calculator assumes a fixed interest rate throughout the term.',
+  },
+  {
+    q: 'What happens if I pay off my loan early?',
+    a: 'Paying off a loan early saves you all the interest that would have accrued over the remaining term. For example, if you pay off a 5-year loan after 3 years, you avoid 2 years of interest charges entirely. However, some loans carry prepayment penalties — a fee charged for paying off the loan ahead of schedule. Always check your loan agreement for prepayment clauses before making a large lump-sum payment. Many personal and auto loans today have no prepayment penalty.',
+  },
+  {
+    q: 'What credit score do I need to get a good loan rate?',
+    a: 'Lenders use your credit score as the primary factor in setting your interest rate. In the US, scores above 740 typically qualify for the best "prime" rates. Scores between 670 and 739 are considered good and usually get competitive offers. Scores from 580 to 669 are fair — loans are available but at noticeably higher rates. Below 580 is poor, and you may face very high rates or need a co-signer. Beyond your score, lenders also weigh your debt-to-income ratio, employment stability, and the size of the loan relative to your income.',
+  },
+];
+---
+
+<Layout
+  title="Loan Calculator - Monthly Payment & Amortization Schedule | CalcSpeed"
+  description="Free loan calculator. Calculate your monthly payment, total interest, and view a full amortization schedule for any loan amount, rate, and term."
+  canonical="https://calcspeed.com/loan-calculator/"
+  schema={schema}
+>
+  <Header />
+
+  <main class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+    <div class="mb-8">
+      <h1 class="text-3xl sm:text-4xl font-bold text-gray-900 mb-2">Loan Calculator</h1>
+      <p class="text-gray-500">Enter your loan details to calculate your monthly payment and view the full amortization schedule.</p>
+    </div>
+
+    <AdSlot slot={1} />
+
+    <!-- Calculator -->
+    <div class="bg-white border border-gray-200 rounded-2xl shadow-sm overflow-hidden">
+      <div class="grid md:grid-cols-2 divide-y md:divide-y-0 md:divide-x divide-gray-100">
+
+        <!-- Inputs -->
+        <div class="p-6 sm:p-8">
+          <h2 class="font-semibold text-gray-900 mb-6 text-lg">Loan Details</h2>
+          <div class="space-y-5">
+
+            <div>
+              <label for="loan-amount" class="block text-sm font-medium text-gray-700 mb-1">Loan Amount</label>
+              <div class="relative">
+                <span class="absolute inset-y-0 left-3 flex items-center text-gray-400 font-mono">$</span>
+                <input id="loan-amount" type="number" value="25000" min="0" step="100"
+                  class="w-full pl-8 pr-4 py-2.5 border border-gray-200 rounded-lg font-mono text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                />
+              </div>
+            </div>
+
+            <div>
+              <label for="interest-rate" class="block text-sm font-medium text-gray-700 mb-1">Annual Interest Rate</label>
+              <div class="relative">
+                <input id="interest-rate" type="number" value="7.0" min="0" max="50" step="0.05"
+                  class="w-full pl-4 pr-8 py-2.5 border border-gray-200 rounded-lg font-mono text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                />
+                <span class="absolute inset-y-0 right-3 flex items-center text-gray-400 font-mono">%</span>
+              </div>
+            </div>
+
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-2">Loan Term</label>
+              <div class="flex flex-wrap gap-2">
+                {[1, 2, 3, 5, 7, 10, 15, 20, 30].map(yr => (
+                  <button
+                    type="button"
+                    data-term={yr}
+                    class={`term-btn px-3 py-2 rounded-lg border text-sm font-semibold transition-colors ${yr === 5 ? 'bg-blue-600 text-white border-blue-600' : 'bg-white text-gray-600 border-gray-200 hover:border-blue-300'}`}
+                  >
+                    {yr}yr
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <div>
+              <label for="start-date" class="block text-sm font-medium text-gray-700 mb-1">Start Date</label>
+              <input id="start-date" type="month"
+                class="w-full px-4 py-2.5 border border-gray-200 rounded-lg font-mono text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              />
+            </div>
+
+          </div>
+        </div>
+
+        <!-- Results -->
+        <div class="p-6 sm:p-8 bg-gray-50">
+          <h2 class="font-semibold text-gray-900 mb-6 text-lg">Your Estimate</h2>
+          <div class="space-y-4">
+            <div class="bg-white rounded-xl border border-blue-100 p-5 text-center shadow-sm">
+              <div class="text-sm text-gray-500 mb-1">Monthly Payment</div>
+              <div id="result-monthly" class="text-4xl font-bold font-mono text-blue-600">—</div>
+            </div>
+            <div class="grid grid-cols-2 gap-3">
+              <div class="bg-white rounded-lg border border-gray-100 p-4">
+                <div class="text-xs text-gray-500 mb-1">Total Payment</div>
+                <div id="result-total" class="text-xl font-semibold font-mono text-gray-900">—</div>
+              </div>
+              <div class="bg-white rounded-lg border border-gray-100 p-4">
+                <div class="text-xs text-gray-500 mb-1">Total Interest</div>
+                <div id="result-interest" class="text-xl font-semibold font-mono text-gray-900">—</div>
+              </div>
+            </div>
+            <div class="bg-white rounded-lg border border-gray-100 p-4">
+              <div class="text-xs text-gray-500 mb-1">Interest as % of Loan</div>
+              <div id="result-interest-pct" class="text-xl font-semibold font-mono text-gray-900">—</div>
+            </div>
+
+            <!-- Bar breakdown -->
+            <div class="pt-2">
+              <div class="flex items-center justify-between text-xs text-gray-500 mb-1">
+                <span>Principal</span>
+                <span id="pct-principal" class="font-mono">—</span>
+              </div>
+              <div class="h-3 bg-gray-100 rounded-full overflow-hidden">
+                <div id="bar-principal" class="h-full bg-blue-600 rounded-full transition-all" style="width:0%"></div>
+              </div>
+              <div class="flex items-center justify-between text-xs text-gray-500 mt-2 mb-1">
+                <span>Interest</span>
+                <span id="pct-interest" class="font-mono">—</span>
+              </div>
+              <div class="h-3 bg-gray-100 rounded-full overflow-hidden">
+                <div id="bar-interest" class="h-full bg-orange-400 rounded-full transition-all" style="width:0%"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Amortization Table -->
+      <div class="border-t border-gray-100 p-6 sm:p-8">
+        <h2 class="font-semibold text-gray-900 mb-4">Amortization Schedule</h2>
+        <div class="overflow-auto max-h-[400px]">
+          <table class="w-full text-sm">
+            <thead class="sticky top-0 bg-white z-10">
+              <tr class="text-left text-xs text-gray-500 uppercase tracking-wider border-b border-gray-100">
+                <th class="pb-2 pr-4 font-medium">No.</th>
+                <th class="pb-2 pr-4 font-medium">Date</th>
+                <th class="pb-2 pr-4 font-medium">Payment</th>
+                <th class="pb-2 pr-4 font-medium">Principal</th>
+                <th class="pb-2 pr-4 font-medium">Interest</th>
+                <th class="pb-2 font-medium">Balance</th>
+              </tr>
+            </thead>
+            <tbody id="amort-table" class="font-mono divide-y divide-gray-50">
+              <!-- Filled by JS -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <AdSlot slot={2} />
+
+    <!-- FAQ -->
+    <section class="mt-12">
+      <h2 class="text-2xl font-bold text-gray-900 mb-6">Frequently Asked Questions</h2>
+      <div class="space-y-4">
+        {faqs.map(faq => (
+          <details class="bg-white border border-gray-200 rounded-xl overflow-hidden group">
+            <summary class="flex items-center justify-between p-5 cursor-pointer list-none font-medium text-gray-900 hover:text-blue-600">
+              {faq.q}
+              <svg class="w-5 h-5 text-gray-400 flex-shrink-0 ml-4 group-open:rotate-180 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+              </svg>
+            </summary>
+            <div class="px-5 pb-5 text-gray-600 text-sm leading-relaxed border-t border-gray-100 pt-4">
+              {faq.a}
+            </div>
+          </details>
+        ))}
+      </div>
+    </section>
+
+    <AdSlot slot={3} />
+
+    <!-- Content -->
+    <section class="mt-12 prose prose-gray max-w-none text-[15px]">
+      <h2 class="text-xl font-bold text-gray-900 mb-3">How to Use the CalcSpeed Loan Calculator</h2>
+      <p class="text-gray-600 leading-relaxed mb-4">
+        Enter your loan amount, the annual interest rate your lender has quoted, and select a loan term. Set a start date to see the exact payment dates in your amortization schedule. The results panel updates instantly, showing your monthly payment, the total amount you will repay over the life of the loan, the total interest cost, and what percentage of your original loan amount is pure interest — so you can see the real cost of borrowing at a glance.
+      </p>
+      <p class="text-gray-600 leading-relaxed">
+        Scroll through the amortization schedule to see every single payment broken down by date, amount, principal portion, interest portion, and remaining balance. Notice how the interest column shrinks and the principal column grows with each payment — this is amortization at work. Try adjusting the loan term to see how a shorter term dramatically reduces total interest, even though the monthly payment is higher. Use this calculator to compare loan offers side by side before you sign.
+      </p>
+    </section>
+  </main>
+
+  <Footer />
+</Layout>
+
+<script>
+  const fmt = (n: number) => '$' + Math.round(n).toLocaleString('en-US');
+  const fmtPct = (n: number) => n.toFixed(1) + '%';
+  const MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+
+  let loanTerm = 5;
+
+  function getStartDate(): { year: number; month: number } {
+    const val = (document.getElementById('start-date') as HTMLInputElement).value;
+    if (val) {
+      const [y, m] = val.split('-').map(Number);
+      return { year: y, month: m - 1 };
+    }
+    const now = new Date();
+    return { year: now.getFullYear(), month: now.getMonth() };
+  }
+
+  function formatPaymentDate(startYear: number, startMonth: number, paymentIndex: number): string {
+    const totalMonths = startMonth + paymentIndex;
+    const year = startYear + Math.floor(totalMonths / 12);
+    const month = totalMonths % 12;
+    return `${MONTHS[month]} ${year}`;
+  }
+
+  function calculate() {
+    const principal = parseFloat((document.getElementById('loan-amount') as HTMLInputElement).value) || 0;
+    const rate = parseFloat((document.getElementById('interest-rate') as HTMLInputElement).value) || 0;
+    const n = loanTerm * 12;
+    const r = rate / 100 / 12;
+
+    let monthly = 0;
+    if (r === 0) {
+      monthly = n > 0 ? principal / n : 0;
+    } else {
+      monthly = principal * (r * Math.pow(1 + r, n)) / (Math.pow(1 + r, n) - 1);
+    }
+
+    const totalPayment = monthly * n;
+    const totalInterest = totalPayment - principal;
+    const interestPct = principal > 0 ? (totalInterest / principal) * 100 : 0;
+
+    (document.getElementById('result-monthly') as HTMLElement).textContent = fmt(monthly);
+    (document.getElementById('result-total') as HTMLElement).textContent = fmt(totalPayment);
+    (document.getElementById('result-interest') as HTMLElement).textContent = fmt(totalInterest);
+    (document.getElementById('result-interest-pct') as HTMLElement).textContent = fmtPct(interestPct);
+
+    const pctP = totalPayment > 0 ? Math.round((principal / totalPayment) * 100) : 0;
+    const pctI = 100 - pctP;
+    (document.getElementById('pct-principal') as HTMLElement).textContent = pctP + '%';
+    (document.getElementById('pct-interest') as HTMLElement).textContent = pctI + '%';
+    (document.getElementById('bar-principal') as HTMLElement).style.width = pctP + '%';
+    (document.getElementById('bar-interest') as HTMLElement).style.width = pctI + '%';
+
+    buildAmortTable(principal, r, monthly, n);
+  }
+
+  function buildAmortTable(principal: number, r: number, monthly: number, n: number) {
+    const tbody = document.getElementById('amort-table') as HTMLTableSectionElement;
+    tbody.innerHTML = '';
+    const { year: startYear, month: startMonth } = getStartDate();
+    let balance = principal;
+
+    for (let i = 1; i <= n; i++) {
+      const interest = balance * r;
+      const princ = Math.min(monthly - interest, balance);
+      balance = Math.max(0, balance - princ);
+
+      const tr = document.createElement('tr');
+      tr.className = 'text-gray-600 hover:bg-blue-50 transition-colors';
+      tr.innerHTML = `
+        <td class="py-2 pr-4 text-gray-400">${i}</td>
+        <td class="py-2 pr-4 text-gray-500">${formatPaymentDate(startYear, startMonth, i)}</td>
+        <td class="py-2 pr-4">${fmt(monthly)}</td>
+        <td class="py-2 pr-4 text-blue-600">${fmt(princ)}</td>
+        <td class="py-2 pr-4 text-orange-500">${fmt(interest)}</td>
+        <td class="py-2">${fmt(balance)}</td>
+      `;
+      tbody.appendChild(tr);
+    }
+  }
+
+  // Set default start date to current month
+  const now = new Date();
+  const startDateInput = document.getElementById('start-date') as HTMLInputElement;
+  startDateInput.value = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
+
+  document.getElementById('loan-amount')?.addEventListener('input', calculate);
+  document.getElementById('interest-rate')?.addEventListener('input', calculate);
+  document.getElementById('start-date')?.addEventListener('input', calculate);
+
+  document.querySelectorAll('.term-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      loanTerm = parseInt((btn as HTMLElement).dataset.term || '5');
+      document.querySelectorAll('.term-btn').forEach(b => {
+        b.classList.remove('bg-blue-600', 'text-white', 'border-blue-600');
+        b.classList.add('bg-white', 'text-gray-600', 'border-gray-200');
+      });
+      btn.classList.add('bg-blue-600', 'text-white', 'border-blue-600');
+      btn.classList.remove('bg-white', 'text-gray-600', 'border-gray-200');
+      calculate();
+    });
+  });
+
+  calculate();
+</script>
